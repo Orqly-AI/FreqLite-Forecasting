@@ -1,0 +1,51 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+We presented \method, an ultra-lightweight, channel-independent
+frequency-decomposed linear forecaster. A learnable, lossless,
+partition-of-unity spectral filter splits the input into bands forecast by
+dedicated linear heads, retaining and modeling the high-frequency band that
+low-pass approaches discard. On the standard long-term forecasting benchmarks
+\method\ is the best lightweight model, and at long lookback ($L{=}336$) it
+attains a lower average error than a PatchTST Transformer ($0.3244$ vs.\ $0.3587$
+MSE) while using roughly $4\times$ fewer parameters, $2.2\times$ less memory, and
+$2.2\times$ less time per epoch on a single 4\,GB laptop GPU. On top of this
+backbone we introduced \arevin, a regime-adaptive reversible normalization that
+strictly generalizes RevIN: it engages under non-stationarity---lowering error by
+up to about $5\%$ on the strongly non-stationary ILI dataset, monotonically in
+its learned gate---and reduces to RevIN without harm on stationary data. Our
+analysis further surfaced a methodological insight: \arevin's gate must be
+initialized at the identity point to avoid a gradient trap that otherwise keeps it
+dormant, while RevIN remains exactly recoverable at the closed-gate value. Because
+each component is an opt-in generalization, the model admits the clean nesting
+$\text{Linear} \subseteq \text{RLinear} \subseteq \method$, and our ablations
+attribute performance to each part.
+
+\paragraph{Limitations.}
+We report several limitations honestly. First, on the standard, largely
+stationary benchmarks the accuracy gains over RLinear are \emph{modest} in
+magnitude (about a $0.9\%$ average-MSE reduction at $L{=}336$), even though they
+are statistically significant across all matched cells ($p \approx 10^{-6}$); the
+headline strengths there are \emph{efficiency} and the long-lookback win over the
+Transformer rather than a large accuracy margin. Second, \arevin's benefit is
+regime-dependent: it is clear under strong non-stationarity---validated on both
+the real ILI dataset and a controlled synthetic drift sweep, where its advantage
+rises monotonically with injected drift---but neutral on stationary sets, where it
+correctly reduces to RevIN; it is therefore best understood as a conditional,
+regime-adaptive component rather than a universal improvement, and its absolute
+gains remain modest even where it helps. Third, \arevin\ is
+a first-order, horizon-aware level/scale correction---it does not model per-step
+variance beyond a scalar, and its drift feature is a simple two-half mean
+difference rather than a learned encoder. Fourth, our study is deliberately
+scoped to linear-scale models on a single 4\,GB GPU; we do not evaluate
+large-capacity regimes, and the Transformer baseline is the 4\,GB-feasible
+PatchTST-small configuration.
+
+\paragraph{Future work.}
+Natural extensions include modeling per-step variance within the reversible
+normalization (a second-order \arevin), learning the drift feature with a small
+shared encoder while preserving the reversibility guarantee, and band-conditional
+heads beyond additive recombination. More broadly, \method\ suggests that careful,
+interpretable, conditionally-adaptive normalization---rather than added model
+capacity---is a promising direction for efficient long-term forecasting on
+commodity hardware.

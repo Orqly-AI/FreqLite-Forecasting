@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use this software or its results, please cite the paper below."
+title: "FreqLite: A Lightweight Frequency-Decomposed Linear Model with Adaptive Reversible Normalization for Robust Long-Term Time-Series Forecasting"
+authors:
+  - family-names: "Baig"
+    given-names: "Mirza Samad Ahmed"
+    affiliation: "Fandaqah, Al Khobar, Saudi Arabia"
+    email: "MirzaSamadcontact@gmail.com"
+  - family-names: "Gillani"
+    given-names: "Syeda Anshrah"
+    affiliation: "Heidelberg University, Heidelberg, Germany"
+    email: "SyedaAnshrah16@gmail.com"
+year: 2026
+url: "https://github.com/Orqly-AI/FreqLite-Forecasting"
+repository-code: "https://github.com/Orqly-AI/FreqLite-Forecasting"
+license: MIT
+keywords:
+  - time-series forecasting
+  - long-term forecasting
+  - frequency decomposition
+  - linear models
+  - reversible instance normalization
+  - efficient deep learning
+  - green AI

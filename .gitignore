@@ -1,0 +1,26 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Datasets — regenerate with `python scripts/download_data.py` (checksums + README kept)
+data/*.csv
+
+# LaTeX build artifacts
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.log
+paper/*.out
+paper/*.synctex.gz
+paper/*.fls
+paper/*.fdb_latexmk
+paper/sections/*.aux
+
+# Run logs
+logs/*.log
+logs/*.txt
+
+# OS
+.DS_Store
+Thumbs.db

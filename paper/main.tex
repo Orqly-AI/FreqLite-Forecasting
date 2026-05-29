@@ -1,0 +1,185 @@
+%% FreqLite: A Lightweight Frequency-Decomposed Linear Model with
+%% Adaptive Reversible Normalization for Robust Long-Term Time-Series Forecasting
+%%
+%% Elsevier elsarticle template. Target venues: Knowledge-Based Systems,
+%% Applied Soft Computing, Neurocomputing, Information Sciences (Q1).
+%%
+%% Build: pdflatex -> bibtex -> pdflatex -> pdflatex  (see scripts/build_paper.ps1)
+
+\documentclass[preprint,review,3p,times]{elsarticle}
+
+% ---------------------------------------------------------------------------
+% Packages
+% ---------------------------------------------------------------------------
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{siunitx}
+\usepackage{xcolor}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usetikzlibrary{positioning,calc,arrows.meta,fit,backgrounds}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue
+}
+
+% ---------------------------------------------------------------------------
+% Convenience macros
+% ---------------------------------------------------------------------------
+\newcommand{\method}{\textsc{FreqLite}}
+\newcommand{\arevin}{A-RevIN}
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\by}{\mathbf{y}}
+\newcommand{\bX}{\mathbf{X}}
+\newcommand{\bY}{\mathbf{Y}}
+\newcommand{\bs}{\mathbf{s}}
+\newcommand{\bp}{\mathbf{p}}
+\newcommand{\R}{\mathbb{R}}
+
+% Placeholder macro for quantitative claims (none remain in the final draft;
+% kept for safety so any stray use still compiles).
+\newcommand{\PLACEHOLDER}[1]{\textbf{[#1]}}
+
+% Helper to fit very wide auto-generated tables (16-column main results) to the
+% text width. Within a group, \fitwidetables makes the next tabular environments
+% be captured and \resizebox-ed to \textwidth. The generated table files are
+% owned by the engineer and are NOT edited; we only scope this around \input.
+\newsavebox{\fitbox}
+\newcommand{\fitwidetables}{%
+  \let\oldtabular\tabular
+  \let\oldendtabular\endtabular
+  \renewenvironment{tabular}[2][]{%
+    \begin{lrbox}{\fitbox}\oldtabular[##1]{##2}%
+  }{%
+    \oldendtabular\end{lrbox}\resizebox{\textwidth}{!}{\usebox{\fitbox}}%
+  }%
+}
+
+% siunitx setup for results tables
+\sisetup{detect-weight=true, detect-family=true, round-mode=places, round-precision=3}
+
+% ---------------------------------------------------------------------------
+% Front matter
+% ---------------------------------------------------------------------------
+\journal{Knowledge-Based Systems}
+
+\begin{document}
+
+\begin{frontmatter}
+
+\title{FreqLite: A Lightweight Frequency-Decomposed Linear Model with
+Adaptive Reversible Normalization for Robust Long-Term Time-Series
+Forecasting}
+
+\author[inst1]{Mirza Samad Ahmed Baig\corref{cor1}}
+\ead{MirzaSamadcontact@gmail.com}
+
+\author[inst2]{Syeda Anshrah Gillani}
+\ead{SyedaAnshrah16@gmail.com}
+
+\cortext[cor1]{Corresponding author.}
+
+\affiliation[inst1]{organization={Fandaqah},
+            city={Al Khobar},
+            country={Saudi Arabia}}
+
+\affiliation[inst2]{organization={Heidelberg University},
+            city={Heidelberg},
+            country={Germany}}
+
+\begin{abstract}
+Long-term time-series forecasting requires models that are both accurate and
+efficient enough to deploy on commodity hardware. Lightweight linear forecasters
+are remarkably strong in this regime, yet they leave two openings: reversible
+instance normalization (RevIN) de-normalizes the entire horizon with a single
+lookback statistic, which is increasingly inaccurate under non-stationarity, and
+time-domain trend/seasonal decomposition relies on a fixed, non-adaptive filter.
+We present \method, an ultra-lightweight, channel-independent frequency-decomposed
+linear forecaster: a learnable, lossless, partition-of-unity spectral filter
+splits the input into bands that are forecast by per-band linear heads and, unlike
+low-pass-truncation approaches, the high-frequency band is retained and modeled.
+\method\ is the best lightweight model on the standard long-term forecasting
+benchmarks and, at long lookback ($L{=}336$), attains a lower average error than a
+PatchTST Transformer ($0.3244$ vs.\ $0.3587$ MSE) while using about $4\times$
+fewer parameters, $2.2\times$ less memory, and $2.2\times$ less time per epoch on
+a single 4\,GB laptop GPU; although modest in magnitude, its improvements are
+statistically significant under paired Wilcoxon tests across all matched cells
+($p \approx 10^{-6}$). We further introduce Adaptive Reversible Instance
+Normalization (\arevin), a \emph{regime-adaptive} reversible normalization that
+strictly generalizes RevIN (recovered exactly when its gate is closed), engages
+under non-stationarity, and reduces to RevIN without harm on stationary data. We
+validate this regime-adaptive behavior on both a real strongly non-stationary
+dataset (ILI, up to about $5\%$ MSE reduction) and a controlled synthetic
+drift sweep in which \arevin's benefit and its learned gate both rise
+monotonically with injected non-stationarity. Our analysis also shows that
+\arevin\ must be initialized to avoid a gradient trap that otherwise keeps it
+dormant. All components are independently ablatable along the nesting
+$\text{Linear} \subseteq \text{RLinear} \subseteq \method$, and the entire study
+is reproducible on commodity hardware.
+\end{abstract}
+
+\begin{keyword}
+Time-series forecasting \sep Frequency decomposition \sep Linear models
+\sep Reversible instance normalization \sep Efficient deep learning
+\end{keyword}
+
+\end{frontmatter}
+
+% ---------------------------------------------------------------------------
+% Body
+% ---------------------------------------------------------------------------
+\input{sections/introduction}
+\input{sections/related_work}
+\input{sections/method}
+\input{sections/experiments}
+\input{sections/results}
+\input{sections/ablation}
+\input{sections/efficiency}
+\input{sections/conclusion}
+
+% ---------------------------------------------------------------------------
+% Required Elsevier declarations
+% ---------------------------------------------------------------------------
+\section*{CRediT authorship contribution statement}
+\textbf{Mirza Samad Ahmed Baig:} Conceptualization, Methodology, Software,
+Validation, Formal analysis, Investigation, Writing -- original draft,
+Writing -- review \& editing. \textbf{Syeda Anshrah Gillani:} Conceptualization,
+Methodology, Software, Validation, Formal analysis, Investigation,
+Writing -- original draft, Writing -- review \& editing. Both authors contributed
+equally to all aspects of this work.
+
+\section*{Declaration of competing interest}
+The authors declare that they have no known competing financial interests or
+personal relationships that could have appeared to influence the work reported in
+this paper.
+
+\section*{Funding}
+This research did not receive any specific grant from funding agencies in the
+public, commercial, or not-for-profit sectors.
+
+\section*{Data availability}
+All datasets used in this study are publicly available standard long-term
+forecasting benchmarks, cited in the text. The complete code, configurations, and
+instructions required to reproduce every reported result are publicly available at
+\url{https://github.com/Orqly-AI/FreqLite-Forecasting}.
+
+% ---------------------------------------------------------------------------
+% Bibliography
+% ---------------------------------------------------------------------------
+\bibliographystyle{elsarticle-num}
+\bibliography{refs}
+
+\end{document}

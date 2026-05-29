@@ -1,0 +1,114 @@
+\section{Experimental Setup}
+\label{sec:experiments}
+
+A central goal of this work is to show that competitive long-term forecasting is
+achievable under a strict commodity-hardware budget. Accordingly, every
+experiment in this paper---training, evaluation, ablation, and efficiency
+profiling, for \method\ and all baselines---is run on a \emph{single} NVIDIA
+RTX~3050~Ti laptop GPU with 4\,GB of VRAM. We re-implement and run all baselines
+ourselves under identical data splits, normalization, seeds, and hardware, so
+all comparisons are like-for-like rather than copied from other papers.
+
+\subsection{Datasets}
+\label{sec:exp:data}
+
+We evaluate on five widely used public long-term forecasting benchmarks: the
+four Electricity Transformer Temperature datasets (ETTh1, ETTh2, ETTm1, ETTm2)
+and Weather. The ETT datasets record seven power-system variates, with
+\texttt{OT} (oil temperature) as the designated target; ETTh1/ETTh2 are sampled
+hourly and ETTm1/ETTm2 every 15 minutes. Weather records 21 meteorological
+variates at a 10-minute resolution. Table~\ref{tab:datasets} summarizes the
+datasets. All series are multivariate and forecast in the channel-independent
+setting (Section~\ref{sec:method:setup}). To probe behavior under distribution
+shift, we additionally use two datasets outside the standard suite in the
+non-stationarity study (Section~\ref{sec:results:nonstat}): Exchange-rate, which
+is mildly non-stationary, and ILI (national illness), which is strongly
+non-stationary and evaluated at the conventional shorter horizons
+$H \in \{24,36,48,60\}$.
+
+\begin{table}[t]
+\centering
+\caption{Summary of the benchmark datasets. ``Variates'' is the number of
+channels $C$; ``Steps'' is the total length of the series. ETT splits follow the
+standard 12/4/4-month train/validation/test convention; Weather uses a
+70\%/10\%/20\% chronological split.}
+\label{tab:datasets}
+\begin{tabular}{lcccc}
+\toprule
+Dataset & Variates ($C$) & Frequency & Steps & Split \\
+\midrule
+ETTh1   & 7  & hourly   & 17{,}420 & 12/4/4 months \\
+ETTh2   & 7  & hourly   & 17{,}420 & 12/4/4 months \\
+ETTm1   & 7  & 15-min   & 69{,}680 & 12/4/4 months \\
+ETTm2   & 7  & 15-min   & 69{,}680 & 12/4/4 months \\
+Weather & 21 & 10-min   & 52{,}696 & 70/10/20 \% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Forecasting Protocol}
+\label{sec:exp:protocol}
+
+We follow the established long-term forecasting protocol
+\citep{zeng2023dlinear,nie2023patchtst} so that our numbers are directly
+comparable to published baselines. For the ETT datasets we use the canonical
+12/4/4-month train/validation/test split; Weather uses a chronological
+70\%/10\%/20\% split. Each series is z-score normalized using statistics
+computed on the \emph{training portion only} (per channel), which prevents
+leakage and matches the standard normalization that makes MSE/MAE comparable
+across papers. The model's internal A-RevIN/RevIN then operates as an instance
+normalization on top of this dataset-level normalization, and the loss and
+metrics are computed in the train-z-scored space.
+
+We report two lookback lengths: $L{=}336$, the strong setting for linear models,
+as the \emph{headline} configuration, and $L{=}96$ for completeness. For every
+lookback we forecast the four standard horizons $H \in \{96, 192, 336, 720\}$.
+We evaluate with Mean Squared Error (MSE) and Mean Absolute Error (MAE),
+averaged over all horizon steps and channels. Every $(\text{dataset}, H,
+\text{model})$ cell is run with three seeds $\{2021, 2022, 2023\}$, and all
+tables report the mean $\pm$ standard deviation over seeds.
+
+\subsection{Baselines}
+\label{sec:exp:baselines}
+
+We compare against a sanity floor and five competitive forecasters spanning the
+linear, lightweight-frequency, and Transformer families:
+\begin{itemize}
+  \item \textbf{Naive (repeat-last)}: predicts the last observed value for the
+        entire horizon; a parameter-free sanity floor.
+  \item \textbf{NLinear} \citep{zeng2023dlinear}: subtracts the last lookback
+        value, applies a single \texttt{Linear}$(L,H)$, and adds it back---a
+        minimal distribution-shift-robust linear model.
+  \item \textbf{DLinear} \citep{zeng2023dlinear}: moving-average trend/seasonal
+        decomposition with two \texttt{Linear}$(L,H)$ heads, summed; the
+        time-domain decomposition baseline \method\ generalizes.
+  \item \textbf{RLinear} \citep{li2023rlinear}: RevIN \citep{kim2022revin} plus a
+        single \texttt{Linear}$(L,H)$; the normalization baseline \arevin\
+        generalizes.
+  \item \textbf{FITS} \citep{xu2024fits}: RevIN plus a low-pass cutoff in the
+        rFFT domain and a single complex linear layer; the closest lightweight
+        frequency-domain prior art, which \emph{discards} the high-frequency band
+        \method\ retains.
+  \item \textbf{PatchTST-small} \citep{nie2023patchtst}: a deliberately small,
+        channel-independent patch Transformer (patch length 16, stride 8,
+        $d_{\text{model}}{=}64$, 4 heads, 2 layers, dropout 0.2), included where
+        it fits the 4\,GB budget as a strong Transformer reference.
+\end{itemize}
+
+\subsection{Implementation Details}
+\label{sec:exp:impl}
+
+All models are implemented in PyTorch 2.6.0 (CUDA 12.4) and trained on a single
+RTX~3050~Ti laptop GPU (4\,GB). We use the Adam optimizer \citep{kingma2015adam}
+with learning rate $10^{-3}$, no weight decay, and MSE loss. Training uses a
+batch size of 32, at most 20 epochs with early stopping (patience 3 on the
+validation loss), a type-1 step learning-rate schedule (halving the rate each
+epoch after the first), and global gradient-norm clipping at 1.0. We train in
+full \texttt{fp32} precision: the models are tiny, fp32 fits comfortably within
+4\,GB, and it avoids the reproducibility noise of mixed precision. For
+reproducibility we fix the \texttt{torch}, \texttt{numpy}, and \texttt{random}
+seeds, enable deterministic algorithms, and disable cuDNN autotuning. At each
+run we record parameters, analytic FLOPs, wall-clock training time per epoch, and
+peak GPU memory via \texttt{torch.cuda.max\_memory\_allocated}; these populate the
+efficiency analysis in Section~\ref{sec:efficiency}. Every reported number is
+regenerable by a script in the repository.

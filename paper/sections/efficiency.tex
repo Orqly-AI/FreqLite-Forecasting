@@ -1,0 +1,95 @@
+\section{Efficiency Analysis}
+\label{sec:efficiency}
+
+The efficiency contribution is empirical: a fully reproducible
+accuracy-versus-cost study run entirely on a single 4\,GB laptop GPU. Following
+the Green~AI agenda \citep{schwartz2020greenai,strubell2019energy}, we treat
+efficiency as a first-class, reported criterion and record, for every model,
+parameter count, analytic FLOPs per forward pass, wall-clock training time per
+epoch, and peak GPU memory.
+
+\subsection{Cost Comparison}
+\label{sec:eff:cost}
+
+Tables~\ref{tab:efficiency_L336} and~\ref{tab:efficiency_L96} report the
+efficiency metrics at lookback $L{=}336$ and $L{=}96$. As derived in
+Section~\ref{sec:method:complexity}, \method\ has $\approx 2HL + 5H + 5$
+parameters---roughly twice a single linear head, since it uses $K{=}2$ band
+heads. Concretely, at $L{=}336$ \method\ uses $64{,}997$ parameters at $H{=}96$
+and $487{,}445$ at $H{=}720$, comparable to DLinear ($64{,}704$ / $485{,}280$)
+and about twice RLinear ($32{,}354$ / $242{,}642$), while FITS is far smaller
+($4{,}644$ / $11{,}352$) by virtue of discarding the high-frequency band. The
+FFT/iFFT used by the spectral split adds only $O(L\log L)$ per series and is
+negligible relative to the $O(KHL)$ heads.
+
+\IfFileExists{../results/tables/efficiency_table_L336.tex}{%
+  \input{../results/tables/efficiency_table_L336.tex}%
+}{\begin{table}[t]\centering\caption{Efficiency at $L{=}336$.}%
+  \label{tab:efficiency_L336}\textit{[efficiency table at $L{=}336$ pending]}\end{table}}
+
+\IfFileExists{../results/tables/efficiency_table_L96.tex}{%
+  \input{../results/tables/efficiency_table_L96.tex}%
+}{\begin{table}[t]\centering\caption{Efficiency at $L{=}96$.}%
+  \label{tab:efficiency_L96}\textit{[efficiency table at $L{=}96$ pending]}\end{table}}
+
+The decisive comparison is with the PatchTST-small Transformer. At $L{=}336$,
+\method\ uses roughly $4\times$ fewer parameters ($487{,}445$ vs.\ $2{,}006{,}802$
+at $H{=}720$; $64{,}997$ vs.\ $328{,}866$ at $H{=}96$), $2.2\times$ less peak GPU
+memory ($86$\,MB vs.\ $183$\,MB; the linear and lightweight-frequency baselines
+sit at $76$--$82$\,MB), and trains $2.2\times$ faster ($1.64$ vs.\ $3.66$ seconds
+per epoch). Yet, as Section~\ref{sec:results:main} shows, \method\ \emph{beats}
+PatchTST-small in average MSE at this long-lookback setting ($0.3244$ vs.\
+$0.3587$). All models fit comfortably within the 4\,GB budget.
+
+\subsection{Scalability to High-dimensional Series (Electricity, 321 Channels)}
+\label{sec:eff:ecl}
+
+Channel independence makes \method's parameter count independent of the number of
+variates $C$, which is what enables it to scale to high-dimensional series on
+constrained hardware. We verify this on the Electricity (ECL) dataset, which has
+$C{=}321$ channels. \method\ and the linear baselines train on full ECL on the
+same single 4\,GB GPU (using the reduced batch size noted in
+Section~\ref{sec:exp:impl}); the PatchTST-small Transformer is omitted here as it
+is not 4\,GB-feasible at this channel count, which we report as an honest
+limitation of the Transformer rather than of \method. As summarized in
+Table~\ref{tab:ecl}, \method\ remains competitive on ECL---second best on average
+MSE ($0.169$), within about $1\%$ of the strongest model (DLinear, $0.167$) and
+ahead of RLinear, NLinear, and FITS---while training comfortably within the 4\,GB
+budget (peak memory $\approx 0.2$\,GB). As on Exchange-rate, DLinear's
+time-domain decomposition is marginally stronger on this dataset; the salient
+result here is scalability---\method\ forecasts all $321$ channels on commodity
+hardware on which the Transformer baseline cannot run at all.
+
+\IfFileExists{../results/tables/ecl_table.tex}{%
+\begin{table}[t]\centering
+\caption{Electricity (ECL, $C{=}321$) results on a single 4\,GB GPU. PatchTST is
+omitted as 4\,GB-infeasible at this channel count.}
+\label{tab:ecl}
+\input{../results/tables/ecl_table.tex}
+\end{table}}{\begin{table}[t]\centering\caption{Electricity (ECL) results.}%
+\label{tab:ecl}\textit{[ECL results pending]}\end{table}}
+
+\subsection{Accuracy--Efficiency Trade-off}
+\label{sec:eff:tradeoff}
+
+Figure~\ref{fig:tradeoff} plots forecasting accuracy against parameter count,
+situating \method\ relative to the linear, lightweight-frequency, and
+Transformer baselines. \method\ occupies a favorable point on the frontier: it
+matches or beats every baseline---including the Transformer---at the headline
+$L{=}336$ setting while remaining at near-linear scale and within a 4\,GB memory
+budget. The efficiency result is independent of the accuracy outcome on any
+single dataset and is, alongside the best-lightweight-model result, the strongest
+empirical claim of the paper.
+
+\begin{figure}[t]
+  \centering
+  \IfFileExists{../results/figures/accuracy_vs_params.pdf}{%
+    \includegraphics[width=0.85\linewidth]{../results/figures/accuracy_vs_params.pdf}%
+  }{\fbox{\parbox[c][0.22\textheight][c]{0.85\linewidth}{\centering
+    \textbf{[accuracy-vs-params figure pending]}}}}
+  \caption{Accuracy--efficiency trade-off: average forecasting MSE against
+  parameter count across all models at $L{=}336$. \method\ attains the lowest
+  error among all models while using a small fraction of the Transformer's
+  parameters.}
+  \label{fig:tradeoff}
+\end{figure}

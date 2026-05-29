@@ -1,0 +1,106 @@
+\section{Introduction}
+\label{sec:intro}
+
+Long-term time-series forecasting (LTSF) underpins decision-making in energy,
+weather, traffic, and industrial monitoring, where models must predict hundreds
+of future steps from a limited lookback. The dominant paradigm for several years
+was the Transformer, with a succession of increasingly elaborate architectures
+\citep{zhou2021informer,wu2021autoformer,zhou2022fedformer,nie2023patchtst}.
+This trend was sharply questioned by the LTSF-Linear family
+\citep{zeng2023dlinear}, which showed that embarrassingly simple linear models
+match or exceed elaborate Transformers on the standard benchmarks, and by the
+subsequent analysis of RLinear \citep{li2023rlinear}, which attributed much of
+the linear models' strength to two ingredients: channel independence and
+reversible instance normalization (RevIN) \citep{kim2022revin}. These findings
+reframed LTSF as a setting where a careful, lightweight model can be both more
+accurate and orders of magnitude cheaper than a heavy one---a goal directly
+aligned with the Green~AI agenda \citep{schwartz2020greenai,strubell2019energy},
+which argues that parameter, compute, and energy cost should be first-class,
+reported evaluation criteria.
+
+Despite their strength, linear LTSF models leave two specific gaps that motivate
+this work. \textbf{First}, RevIN---now a near-universal plug-in---de-normalizes
+the \emph{entire} forecast horizon with the \emph{single} mean and standard
+deviation computed over the lookback. Under non-stationarity, the appropriate
+level and scale drift across the horizon: the lookback statistics are a good
+estimate for the first predicted step and progressively worse for the last.
+RevIN's fixed, horizon-agnostic inverse cannot express this drift, and the
+resulting error grows with horizon distance. \textbf{Second}, the decomposition
+used by DLinear---a \emph{fixed} moving-average kernel that splits the series
+into trend and remainder---is a single, hand-set low-pass filter applied in the
+time domain, with no ability to adapt its band structure to a dataset's spectral
+content, and it forecasts the remainder with an unconstrained head rather than
+treating high-frequency structure as a first-class, separately modeled
+component.
+
+We address both gaps with \method, an ultra-lightweight, channel-independent
+\emph{frequency-decomposed linear} forecaster. The backbone replaces the single
+linear head with $K$ per-band heads fed by a learnable, lossless,
+partition-of-unity spectral decomposition that adds only $2(K{-}1)$ scalar
+parameters and generalizes DLinear's fixed moving-average split into a learnable
+frequency-domain split. We are careful not to overclaim: we do \emph{not} assert
+\method\ is the first frequency-domain linear forecaster. The closest prior art,
+FITS \citep{xu2024fits}, also combines RevIN with a frequency-domain linear map,
+but it applies a low-pass cutoff and \emph{discards} the high-frequency content
+above it; \method\ instead \emph{keeps} all frequency content and routes the
+high-frequency band to its own dedicated head, so residual structure is
+\emph{modeled} rather than thrown away. Empirically, \method\ is the best
+lightweight model on the standard long-term forecasting benchmarks, and---most
+notably---at long lookback ($L{=}336$) it attains a lower average error than a
+PatchTST Transformer \citep{nie2023patchtst} while using about $4\times$ fewer
+parameters, $2.2\times$ less peak GPU memory, and $2.2\times$ less time per
+epoch, all on a single 4\,GB laptop GPU.
+
+On top of this backbone we introduce \emph{Adaptive Reversible Instance
+Normalization} (\arevin), a \emph{regime-adaptive} reversible normalization that
+strictly generalizes RevIN. Rather than re-injecting one fixed statistic at every
+step, \arevin\ applies a small learnable per-step scale and shift plus a term that
+extrapolates the \emph{observed} lookback drift across the horizon, all behind a
+learnable gate; RevIN is recovered \emph{exactly} when the gate is closed.
+Empirically, \arevin's benefit is regime-dependent, exactly as its name suggests:
+it engages under non-stationarity---reducing error by up to about $5\%$ on the
+strongly non-stationary ILI dataset, monotonically in the learned gate---while on
+stationary benchmarks it reduces to RevIN with no harm. Our analysis also yields a
+methodological insight: because \arevin's adaptive parameters start at their
+identity values, the gate is gradient-starved at the conventional small
+initialization and stays dormant even where adapting would help; initializing the
+gate at the identity point (so its gradient is non-zero) lets it engage, while
+still recovering RevIN exactly at the closed-gate value. \arevin\ is
+philosophically aligned with the de-stationarization idea of Non-stationary
+Transformers \citep{liu2022nonstationary}---removed statistics should be
+re-injected \emph{adaptively}---but is realized as an attention-free module suited
+to a linear backbone.
+
+Because each component is an opt-in generalization that degenerates to a known
+baseline, \method\ admits the clean theoretical framing
+$\text{Linear} \subseteq \text{RLinear} \subseteq \method$, with DLinear's
+decomposition recovered as a fixed-mask special case; this strict nesting makes
+every added component independently ablatable. The entire study---training,
+ablations, and a dedicated non-stationarity analysis---is run on a single 4\,GB
+laptop GPU and is fully reproducible, with all baselines re-implemented and run by
+us under identical splits, normalization, seeds, and hardware, and with
+parameters, FLOPs, training time, and peak memory reported alongside MSE and MAE.
+Consistent with our honesty bar, we report that the accuracy gains over RLinear on
+the standard (stationary) benchmarks are modest, and we are explicit that the
+headline strengths there are efficiency and the long-lookback win over the
+Transformer.
+
+\paragraph{Contributions.} In summary, this paper makes three contributions:
+\begin{itemize}
+  \item \textbf{\method.} An ultra-lightweight frequency-decomposed linear
+        forecaster---a learnable, lossless band split feeding per-band linear
+        heads---that is the best lightweight model on standard LTSF benchmarks
+        and, at long lookback ($L{=}336$), surpasses the PatchTST Transformer at
+        roughly $4\times$ fewer parameters and $2.2\times$ less memory on a single
+        4\,GB laptop GPU, with improvements that are statistically significant
+        under paired Wilcoxon tests ($p \approx 10^{-6}$).
+  \item \textbf{A-RevIN.} A regime-adaptive reversible normalization that
+        generalizes RevIN, together with an analysis showing (i) it must be
+        initialized to avoid a gradient trap, and (ii) it engages and helps under
+        non-stationarity---validated on both a real strongly non-stationary
+        dataset (ILI) and a controlled synthetic drift sweep---while degrading
+        gracefully to RevIN on stationary data.
+  \item \textbf{A reproducible accuracy--efficiency study.} A fully reproducible
+        study on commodity hardware (Green~AI), with ablations isolating each
+        component and a dedicated non-stationarity analysis.
+\end{itemize}

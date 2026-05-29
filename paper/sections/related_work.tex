@@ -1,0 +1,164 @@
+\section{Related Work}
+\label{sec:related}
+
+\subsection{Linear Forecasters}
+\label{sec:related:linear}
+
+The LTSF-Linear family \citep{zeng2023dlinear} showed that embarrassingly simple
+linear models match or beat elaborate Transformer forecasters on the standard
+long-term benchmarks. Three variants are direct baselines for us. \emph{Linear}
+is a single linear layer mapping a length-$L$ lookback to a length-$H$ horizon,
+applied per channel. \emph{NLinear} subtracts the last value of the lookback
+before the linear map and adds it back afterwards---a one-line normalization
+that handles simple distribution shift between train and test. \emph{DLinear}
+decomposes the series into a moving-average trend and a seasonal/remainder
+component (the additive decomposition introduced by Autoformer
+\citep{wu2021autoformer}), forecasts each with its own linear layer, and sums
+them. RLinear \citep{li2023rlinear} analyzes \emph{why} linear maps work and
+introduces RLinear, the combination of RevIN \citep{kim2022revin} with a single
+linear layer; its central findings are that the linear map captures periodicity
+and that RevIN and channel independence (CI) are the two ingredients that make
+linear models robust.
+
+DLinear and RLinear are \method's direct competitors and primary baselines. The
+key conceptual contrast is the \emph{domain of decomposition}. DLinear
+decomposes in the time domain via a fixed moving-average kernel into trend and
+remainder---a fixed low-pass smoothing whose remainder is everything the average
+misses, forecast by an unconstrained head. \method\ decomposes in the frequency
+domain via a \emph{learnable} spectral filter into low- and high-frequency
+bands; a moving average is one particular fixed low-pass filter, and \method\
+generalizes it by learning the band split end-to-end and giving each band its
+own lightweight head. Against RLinear, \method\ shares the RevIN+linear backbone
+but (a) replaces the single linear map with a frequency-decomposed set of heads
+and (b) replaces vanilla RevIN with the horizon-adaptive \arevin\
+(Section~\ref{sec:method:arevin}). The ablation that drops the frequency split
+and closes the \arevin\ gate recovers an RLinear-like model, the controlled
+comparison that isolates our contributions
+(Section~\ref{sec:ablation}).
+
+\subsection{Non-stationarity and Reversible Normalization}
+\label{sec:related:norm}
+
+Real series are non-stationary: mean and variance drift between the lookback and
+the horizon, and between train and test. RevIN \citep{kim2022revin} is a
+symmetric, instance-wise normalize-then-denormalize wrapper with a learnable
+affine transform: it removes each instance's mean and standard deviation at the
+input and restores them at the output, and it is now a near-universal plug-in.
+Non-stationary Transformers \citep{liu2022nonstationary} make a subtler point:
+naive stationarization can \emph{over-stationarize} and erase the very signal a
+model needs, so they pair series stationarization with a de-stationary attention
+that re-injects the removed statistics into the attention computation.
+
+This is \method's clearest novelty. Vanilla RevIN applies a single,
+horizon-agnostic de-normalization, adding back exactly the lookback mean and
+variance to \emph{every} forecast step; but under distribution shift the
+appropriate level and scale typically drift across the horizon, so the lookback
+statistics are accurate for the first step and progressively worse for the last.
+Our \arevin\ keeps RevIN's reversible structure but makes the de-normalization
+horizon-aware and gated: a small learnable module modulates the restored
+statistics as a function of horizon position, and a gate interpolates between
+trusting the lookback statistics and letting the prediction set its own level.
+This is philosophically aligned with the de-stationary idea of Non-stationary
+Transformers---removed statistics should be re-injected \emph{adaptively} rather
+than identically---but is realized as a lightweight, attention-free,
+RevIN-compatible module suited to a linear backbone. To our knowledge, a
+horizon-adaptive or gated RevIN of this form has not been published, and it is
+the component least anticipated by prior linear or frequency-domain models
+(Section~\ref{sec:related:positioning}).
+
+\subsection{Frequency-Domain Forecasting}
+\label{sec:related:freq}
+
+A large body of work moves part or all of the forecasting computation into a
+spectral representation, motivated by the fact that long-term series are
+dominated by a few sparse, well-separated periodic components. Autoformer
+\citep{wu2021autoformer} introduces the trend/seasonal series-decomposition
+block (the moving-average split DLinear later reused) and replaces self-attention
+with an Auto-Correlation mechanism that discovers period-based dependencies via
+the FFT. FEDformer \citep{zhou2022fedformer} combines series decomposition with
+frequency-enhanced attention over a random subset of Fourier (or wavelet) modes,
+giving linear complexity and an explicit low-rank spectral filter. FiLM
+\citep{zhou2022film} uses Legendre-polynomial projections to compress history and
+Fourier projections to denoise it. TimesNet \citep{wu2023timesnet} uses the FFT
+to find dominant periods, folds the 1D series into period-indexed 2D tensors, and
+applies 2D convolutions. FreTS \citep{yi2023frets} is the most relevant of this
+group: it discards attention entirely and learns frequency-domain MLPs over the
+real and imaginary parts of the spectrum, across both channel and time
+dimensions.
+
+\method\ shares these models' premise---the frequency domain is the right place
+to separate predictable structure from noise---but rejects their machinery.
+FEDformer, FiLM, and TimesNet are heavy (attention, polynomial bases, or 2D
+convolutions), with parameter and FLOP budgets far beyond the small-model regime
+a 4\,GB GPU comfortably supports; FreTS is lighter but still uses complex-valued
+MLPs across channels and time. \method\ instead uses the spectrum only to
+\emph{split} the signal into bands, then forecasts each band with a plain
+real-valued linear head in the time domain. The frequency domain is a routing
+device, not the space in which the forecast is computed, which keeps the model
+linear-scale while still exploiting the spectral separability these works
+demonstrate.
+
+\subsection{Transformer, MLP-Mixer, and Multiscale Forecasters}
+\label{sec:related:transformer}
+
+At the high-accuracy, high-cost end of the design space, Informer
+\citep{zhou2021informer} makes long-sequence forecasting tractable with
+ProbSparse attention and a generative decoder; PatchTST \citep{nie2023patchtst}
+tokenizes the series into subseries patches and is strictly channel-independent,
+and is the strongest Transformer forecaster on the standard benchmarks and our
+small-Transformer baseline where memory permits; iTransformer
+\citep{liu2024itransformer} inverts the tokenization so each variate becomes a
+token and attention models cross-channel dependencies. These motivate the
+central question of this paper: how much of their accuracy can a linear-scale
+model recover at a fraction of the cost? We adopt PatchTST's channel-independent
+treatment but reject patching and attention.
+
+A parallel line removes attention while keeping expressive mixing. TSMixer
+\citep{chen2023tsmixer} is an all-MLP architecture alternating time-mixing and
+feature-mixing MLPs; TimeMixer \citep{wang2024timemixer} decomposes the series at
+multiple sampling scales and mixes the disentangled multiscale components. Both
+confirm that decomposition plus simple mixing is a strong, attention-free recipe,
+and TimeMixer's multiscale decomposition is a temporal analogue of our spectral
+band split. They differ from \method\ in weight class: they stack several mixing
+blocks across scales and channels, whereas \method\ uses a single frequency split
+with $K$ linear heads and no inter-channel mixing, targeting the smallest viable
+model. The efficiency prong is grounded in the Green~AI agenda
+\citep{schwartz2020greenai} and the energy-cost analysis of large models
+\citep{strubell2019energy}, which argue that efficiency should be reported
+alongside accuracy; \method\ reports parameters, FLOPs, train time, and peak
+memory as first-class metrics. The Transformer \citep{vaswani2017attention} and
+Adam \citep{kingma2015adam} are cited as foundational references.
+
+\subsection{Positioning and Novelty}
+\label{sec:related:positioning}
+
+Two recent works are close enough that we position against them explicitly and
+honestly. FITS \citep{xu2024fits} is the closest lightweight frequency model: it
+applies rFFT to the lookback, a single complex-valued linear layer performing
+amplitude scaling and phase shifting, then irFFT, using RevIN and a \emph{fixed
+low-pass filter} that \emph{discards} high-frequency components (the source of
+its $\sim$10k-parameter footprint), and is channel-independent. The overlap with
+\method\ is real---both are RevIN + frequency-domain + lightweight + CI---and
+reviewers will rightly raise it. \method\ differs from FITS in three concrete,
+testable ways: (i) high-frequency content is \emph{modeled} by a dedicated head
+rather than discarded by a low-pass filter, so residual structure that a low-pass
+model leaves on the table can be exploited; (ii) the forecast is computed in the
+time domain by $K$ real linear heads, not by a single complex map in the
+frequency domain---a simpler hypothesis class; and (iii) the normalization is the
+horizon-adaptive, gated \arevin, which has no analogue in FITS's plain RevIN.
+Accordingly, we do \emph{not} claim to be the first lightweight frequency-domain
+linear model---FITS holds that ground---and we include FITS as a run-in-budget
+baseline.
+
+FreqMoE \citep{liu2025freqmoe} also decomposes the spectrum into bands and
+assigns each to an expert, with a gating network, learnable band boundaries, and
+complex-valued residual blocks, using plain instance normalization. It shares the
+``each band gets its own head'' idea but is substantially heavier---a
+mixture-of-experts with complex-valued multi-block stacks---whereas \method\ uses
+$K$ real linear heads recombined by addition, and FreqMoE has no adaptive
+normalization contribution. As a 2025 arXiv-only work it is contemporaneous
+rather than established prior art; we cite it and differentiate on weight class
+and on \arevin. Taken together, the frequency band split with per-band heads is
+not unique, so we present it as a specific lightweight design point rather than a
+new concept, and we foreground \arevin---the prong with the least prior-art
+overlap---as the primary methodological novelty.

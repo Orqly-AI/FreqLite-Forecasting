@@ -1,0 +1,61 @@
+# FreqLite default experiment configuration (method_spec Sec. 10).
+# Per-experiment H is set on the command line / by the runner grid.
+
+model:
+  name: freqlite
+  K: 2
+  recombination: sum          # {sum, gate}
+  decomposition:
+    init_cutoff: 0.25
+    init_sharpness: 10.0
+    learnable: true
+    mask_eps: 1.0e-3
+  arevin:
+    affine: true
+    eps: 1.0e-5
+    adaptive: true
+    use_lambda: true
+    init_rho_logit: 0.0          # gate starts at rho=0.5 so A-RevIN can engage (rho=-4 was gradient-trapped; see non-stationarity study)
+
+train:
+  loss: mse
+  optimizer: adam
+  lr: 1.0e-3
+  weight_decay: 0.0
+  batch_size: 32              # 16 for ECL
+  max_epochs: 20
+  patience: 3
+  lr_schedule: type1          # halve each epoch after epoch 1
+  grad_clip_norm: 1.0
+  precision: fp32
+
+data:
+  normalize: zscore_train_stats
+  splits: standard
+
+experiment:
+  datasets: [ETTh1, ETTh2, ETTm1, ETTm2, weather]
+  horizons: [96, 192, 336, 720]
+  lookback: 336               # headline; 96 also run for completeness
+  seeds: [2021, 2022, 2023]
+  models: [naive, nlinear, dlinear, rlinear, fits, freqlite, patchtst]
+
+# Per-model overrides (merged onto the model config when that model is built).
+model_overrides:
+  dlinear:
+    kernel_size: 25
+  fits:
+    cutoff_ratio: 0.25
+  patchtst:
+    patch_len: 16
+    stride: 8
+    d_model: 64
+    n_heads: 4
+    e_layers: 2
+    d_ff: 128
+    dropout: 0.2
+
+# Per-dataset training overrides.
+data_overrides:
+  electricity:
+    batch_size: 16

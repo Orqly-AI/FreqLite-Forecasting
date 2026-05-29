@@ -1,0 +1,225 @@
+\section{Results}
+\label{sec:results}
+
+We first present the main long-term forecasting comparison, then analyze
+non-stationary regimes and the role of \arevin. All accuracy numbers are test
+MSE and MAE in the train-standardized space, averaged over horizon steps and
+channels and reported as mean (with standard deviation in the tables) over three
+seeds; the best result in each row is shown in bold and the second best
+underlined.
+
+\subsection{Main Comparison}
+\label{sec:results:main}
+
+Table~\ref{tab:main_L336} reports the headline comparison at lookback $L{=}336$
+across the five benchmarks and four horizons $H \in \{96,192,336,720\}$, against
+the Naive floor, NLinear, DLinear, RLinear, FITS, and PatchTST-small;
+Table~\ref{tab:main_L96} reports the corresponding $L{=}96$ results.
+
+% The main tables are very wide (16 columns with mean$\pm$std cells). We scope
+% \fitwidetables (defined in main.tex) around the \input so the tabular is
+% \resizebox-ed to \textwidth; the generated file is owned by the engineer and
+% not edited here. The group keeps the redefinition local to each table.
+\IfFileExists{../results/tables/main_table_L336.tex}{%
+  \begingroup\fitwidetables\input{../results/tables/main_table_L336.tex}\endgroup%
+}{\begin{table*}[t]\centering\caption{Main results at $L{=}336$.}%
+  \label{tab:main_L336}\textit{[main results table at $L{=}336$ pending]}\end{table*}}
+
+\IfFileExists{../results/tables/main_table_L96.tex}{%
+  \begingroup\fitwidetables\input{../results/tables/main_table_L96.tex}\endgroup%
+}{\begin{table*}[t]\centering\caption{Main results at $L{=}96$.}%
+  \label{tab:main_L96}\textit{[main results table at $L{=}96$ pending]}\end{table*}}
+
+At the headline $L{=}336$ setting, \method\ attains the best average test MSE of
+$0.3244$ over the $20$ dataset$\times$horizon cells, ahead of RLinear ($0.3273$),
+NLinear ($0.3290$), and FITS ($0.3291$), and well ahead of DLinear ($0.3559$) and
+the PatchTST-small Transformer ($0.3587$); the Naive floor is $0.7738$. \method\
+wins the most cells outright ($10$ of $20$), versus PatchTST ($4$), FITS ($3$),
+and DLinear ($3$). It is thus the strongest lightweight model on the standard
+benchmarks and, notably, surpasses the Transformer baseline at long lookback
+while using roughly $4\times$ fewer parameters and $2.2\times$ less memory
+(Section~\ref{sec:efficiency}).
+
+The value of long lookback for linear-scale models is underscored at $L{=}96$
+(Table~\ref{tab:main_L96}), where PatchTST-small is the overall best ($0.3541$
+average MSE, $12$ wins): with a short context the Transformer's representational
+capacity pays off. Among the lightweight models, however, \method\ remains best
+($0.3589$, $7$ wins), ahead of RLinear ($0.3611$), NLinear ($0.3623$), FITS
+($0.3669$), and DLinear ($0.3989$). The headline regime for a linear-scale
+forecaster is the long-lookback setting, and there \method\ leads all baselines
+including the Transformer.
+
+\subsection{Discussion}
+\label{sec:results:discussion}
+
+Two findings stand out. First, the accuracy gains of \method\ over the strongest
+linear baseline (RLinear) on the standard, largely stationary benchmarks are
+\emph{modest}: the average-MSE gap at $L{=}336$ is about $0.9\%$. The headline
+strengths on these datasets are therefore (i) being the best lightweight model
+overall and (ii) surpassing the PatchTST Transformer at long lookback at a small
+fraction of its cost---an efficiency result we quantify in
+Section~\ref{sec:efficiency}---rather than a large accuracy margin over RLinear.
+We report this plainly. Crucially, though modest in magnitude, this gain over
+RLinear is \emph{statistically robust rather than noise}: a paired Wilcoxon
+signed-rank test across all $60$ $(\text{dataset},\text{horizon},\text{seed})$
+cells gives $p \approx 1.2\times10^{-6}$ at $L{=}336$
+(Table~\ref{tab:significance}), and \method\ improves significantly over every
+linear and lightweight-frequency baseline at both lookbacks
+($p < 10^{-3}$ in all such comparisons). The one comparison in which \method\
+does not lead is against PatchTST at the short lookback $L{=}96$ ($-1.36\%$),
+consistent with the Transformer's short-context advantage discussed above; at the
+headline $L{=}336$ setting \method\ surpasses PatchTST by $9.57\%$
+($p \approx 8.7\times10^{-6}$). Second, the picture changes on
+\emph{non-stationary} data, where \method's regime-adaptive normalization engages
+and yields substantially larger gains; we analyze this next.
+
+\IfFileExists{../results/tables/significance_table.tex}{%
+\begin{table}[t]\centering
+\caption{Paired significance tests for \method\ versus each baseline (Wilcoxon
+signed-rank over all matched $(\text{dataset},\text{horizon},\text{seed})$
+cells). $\Delta$MSE is the mean relative improvement of \method\ (positive =
+\method\ better); $n$ is the number of paired cells.
+$^{***}p<10^{-3}$, $^{*}p<0.05$.}
+\label{tab:significance}
+\input{../results/tables/significance_table.tex}
+\end{table}}{\begin{table}[t]\centering\caption{Significance tests.}%
+\label{tab:significance}\textit{[significance table pending]}\end{table}}
+
+\subsection{Non-stationary Regimes and the Role of \arevin}
+\label{sec:results:nonstat}
+
+\arevin\ is designed to engage under non-stationarity and to reduce to RevIN
+otherwise. To test this directly we evaluate two datasets outside the standard
+suite: Exchange-rate, which is only mildly non-stationary, and ILI (national
+illness), which is strongly non-stationary. Table~\ref{tab:nonstationary}
+reports MSE on both.
+
+\IfFileExists{../results/tables/nonstationary_table.tex}{%
+\begin{table}[t]\centering
+\caption{Non-stationarity study (test MSE; lower is better). Exchange-rate is
+mildly non-stationary; ILI is strongly non-stationary. Best per row in
+\textbf{bold}.}
+\label{tab:nonstationary}
+\input{../results/tables/nonstationary_table.tex}
+\end{table}}{\begin{table}[t]\centering\caption{Non-stationarity study.}%
+\label{tab:nonstationary}\textit{[non-stationary table pending]}\end{table}}
+
+On the mildly non-stationary Exchange-rate data, DLinear is the best model and
+\arevin\ is neutral-to-slightly-negative: isolating its effect by comparing
+RLinear with an A-RevIN-Linear of the same backbone gives differences of only
+$+0.000$, $-0.000$, $-0.001$, and $-0.002$ across the four horizons. We report
+honestly that \method\ is competitive \emph{within} the RevIN family here but
+that DLinear's time-domain decomposition wins on this dataset.
+
+On the strongly non-stationary ILI data, \arevin\ clearly helps. Isolating its
+effect on the same single-head backbone (RLinear vs.\ A-RevIN-Linear), the
+adaptive normalization reduces MSE by $0.66\%$, $0.63\%$, $0.52\%$, and $0.38\%$
+at horizons $H \in \{24,36,48,60\}$. The full \method\ improves over RLinear by
+$4.0\%$, $4.8\%$, $3.5\%$, and $3.2\%$ (mean $3.9\%$) across the same horizons,
+while DLinear and FITS are far worse on ILI (MSE in the $4.6$--$6.6$ range versus
+\method's $3.3$--$3.9$).
+
+\paragraph{Gate sweep and a gradient-trap finding.}
+Table~\ref{tab:arevin_gate} sweeps the \arevin\ gate on ILI. As the learned mean
+gate $\bar\rho$ increases from $0.02$ (with raw gate initialization
+$\rho_0{=}{-}4$) through $0.51$ ($\rho_0{=}0$) to $1.00$ (forced), the ILI error
+decreases \emph{monotonically}. This exposes a methodological subtlety: with
+$\rho_0{=}{-}4$ the gate is gradient-starved. Because the adaptive parameters are
+initialized at their identity values
+($\mathbf{a}=\mathbf{b}=\boldsymbol{\lambda}=\mathbf{0}$), the gradient
+$\partial\mathcal{L}/\partial\rho$ is approximately zero at initialization, so the
+gate never opens and \arevin\ stays at RevIN even on data where adapting would
+help (the gate remained at $\bar\rho{=}0.02$ on ILI). Initializing $\rho_0{=}0$,
+now our default, lets the gate engage, while RevIN is still recovered exactly at
+$\rho{=}0$. This is the recommended initialization for \arevin.
+
+\IfFileExists{../results/tables/arevin_gate_table.tex}{%
+\begin{table}[t]\centering
+\caption{\arevin\ gate sweep on ILI (test MSE; lower is better). $\bar\rho$ is
+the learned mean gate and $\rho_0$ the raw gate initialization. Increasing gate
+engagement monotonically lowers error.}
+\label{tab:arevin_gate}
+\input{../results/tables/arevin_gate_table.tex}
+\end{table}}{\begin{table}[t]\centering\caption{A-RevIN gate sweep on ILI.}%
+\label{tab:arevin_gate}\textit{[gate-sweep table pending]}\end{table}}
+
+\paragraph{Interpretability.}
+Figure~\ref{fig:learned_filter} shows the learned spectral mask, and
+Figure~\ref{fig:arevin_profile} the per-step \arevin\ correction profile, giving
+direct evidence that the components behave as designed rather than merely adding
+parameters.
+
+\begin{figure}[t]
+  \centering
+  \IfFileExists{../results/figures/learned_filter.pdf}{%
+    \includegraphics[width=0.82\linewidth]{../results/figures/learned_filter.pdf}%
+  }{\fbox{\parbox[c][0.20\textheight][c]{0.8\linewidth}{\centering
+    \textbf{[learned filter figure pending]}}}}
+  \caption{Learned low/high spectral masks of \method's partition-of-unity
+  decomposition as a function of normalized frequency.}
+  \label{fig:learned_filter}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \IfFileExists{../results/figures/arevin_profile.pdf}{%
+    \includegraphics[width=0.82\linewidth]{../results/figures/arevin_profile.pdf}%
+  }{\fbox{\parbox[c][0.20\textheight][c]{0.8\linewidth}{\centering
+    \textbf{[A-RevIN profile figure pending]}}}}
+  \caption{Per-step \arevin\ correction profile across the forecast horizon,
+  showing how the adaptive de-normalization varies with horizon distance.}
+  \label{fig:arevin_profile}
+\end{figure}
+
+\subsection{A Controlled Study: \arevin\ Engages with Non-stationarity}
+\label{sec:results:synthetic}
+
+The ILI result shows \arevin\ helping on a real strongly non-stationary dataset,
+but real data confounds non-stationarity with many other factors. To confirm the
+mechanism directly, we construct a synthetic benchmark in which the
+non-stationarity magnitude is the \emph{only} thing that varies. Each series has
+four channels and length $4000$ and is the sum of (i) a stationary seasonal base
+with periods $24$ and $168$, (ii) Gaussian observation noise, and (iii)
+$\delta$ times a unit-variance \emph{persistent} trend---an AR(1)-smoothed random
+slope that is locally linear and therefore extrapolatable. The seasonal base and
+the trend signal are \emph{shared} across all values of $\delta$, so increasing
+$\delta$ injects more non-stationarity while holding everything else fixed; at
+$\delta{=}0$ the series is stationary. We isolate \arevin\ by comparing RLinear
+(plain RevIN) against an A-RevIN-Linear ($K{=}1$, identical backbone) at
+$L{=}96, H{=}96$ over three seeds.
+
+Table~\ref{tab:synthetic} reports the MSE reduction of \arevin\ over RevIN and the
+learned mean gate $\bar\rho$ as $\delta$ increases. The benefit rises
+\emph{monotonically} with injected drift---from neutral-to-slightly-negative when
+the series is stationary or mildly non-stationary ($-0.28\%$ at $\delta{=}0$,
+$-0.23\%$ at $\delta{=}0.5$, $-0.09\%$ at $\delta{=}1$) to a clear positive gain
+as drift grows ($+0.30\%$ at $\delta{=}2$, $+1.42\%$ at $\delta{=}4$), with the
+learned gate widening accordingly ($\bar\rho$ from $0.52$ to $0.54$). This is a
+controlled confirmation of the mechanism that complements the ILI result: under
+stationarity \arevin\ is harmless and reduces to RevIN, and its advantage grows
+precisely with the non-stationarity it is designed to handle. As elsewhere, we
+note honestly that the absolute gains are modest.
+
+\IfFileExists{../results/tables/synthetic_table.tex}{%
+\begin{table}[t]\centering
+\caption{Controlled synthetic-drift study at $L{=}96, H{=}96$ (3 seeds). $\delta$
+scales the injected persistent trend ($\delta{=}0$ is stationary). $\Delta\%$ is
+the MSE reduction of A-RevIN-Linear over RLinear (plain RevIN) on the identical
+backbone; $\bar\rho$ is \arevin's learned mean gate. The benefit increases
+monotonically with $\delta$.}
+\label{tab:synthetic}
+\input{../results/tables/synthetic_table.tex}
+\end{table}}{\begin{table}[t]\centering\caption{Synthetic-drift study.}%
+\label{tab:synthetic}\textit{[synthetic table pending]}\end{table}}
+
+\begin{figure}[t]
+  \centering
+  \IfFileExists{../results/figures/synthetic_drift.pdf}{%
+    \includegraphics[width=0.82\linewidth]{../results/figures/synthetic_drift.pdf}%
+  }{\fbox{\parbox[c][0.20\textheight][c]{0.8\linewidth}{\centering
+    \textbf{[synthetic-drift figure pending]}}}}
+  \caption{\arevin's benefit and its learned gate both increase with injected
+  non-stationarity: MSE reduction over RevIN and learned mean gate $\bar\rho$ as
+  functions of the controlled drift magnitude $\delta$.}
+  \label{fig:synthetic}
+\end{figure}
