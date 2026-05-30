@@ -1,0 +1,10 @@
+Highlights
+==========
+(Knowledge-Based Systems requires 3-5 highlights, each <= 85 characters.
+ Character counts shown in brackets; remove them before submission.)
+
+- FreqLite: a lightweight frequency-decomposed linear model for long-term forecasting   [83]
+- Surpasses a PatchTST Transformer at long lookback with about 4x fewer parameters       [80]
+- Trains and runs end-to-end on a single 4 GB laptop GPU (Green AI)                       [64]
+- A-RevIN adapts normalization to non-stationarity and reduces to RevIN otherwise         [79]
+- Statistically significant gains; all results reproducible from released code            [76]

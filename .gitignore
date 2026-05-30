@@ -21,6 +21,9 @@ paper/sections/*.aux
 logs/*.log
 logs/*.txt
 
+# Submission-internal (do NOT publish)
+paper/suggested_reviewers.md
+
 # OS
 .DS_Store
 Thumbs.db
