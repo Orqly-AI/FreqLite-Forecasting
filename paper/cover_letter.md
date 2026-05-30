@@ -30,5 +30,5 @@ Fandaqah, Al Khobar, Saudi Arabia
 MirzaSamadcontact@gmail.com
 
 Syeda Anshrah Gillani
-Heidelberg University, Heidelberg, Germany
+Hamdard University, Karachi, Pakistan
 SyedaAnshrah16@gmail.com

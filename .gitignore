@@ -21,6 +21,9 @@ paper/sections/*.aux
 logs/*.log
 logs/*.txt
 
+# Build/distribution artifacts (arXiv package etc.)
+dist/
+
 # Submission-internal (do NOT publish)
 paper/suggested_reviewers.md
 paper/reviewer_rebuttals.md
