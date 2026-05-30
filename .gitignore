@@ -23,6 +23,7 @@ logs/*.txt
 
 # Submission-internal (do NOT publish)
 paper/suggested_reviewers.md
+paper/reviewer_rebuttals.md
 
 # OS
 .DS_Store
