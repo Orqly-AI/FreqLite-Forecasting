@@ -124,9 +124,8 @@ under non-stationarity, and reduces to RevIN without harm on stationary data. We
 validate this regime-adaptive behavior on both a real strongly non-stationary
 dataset (ILI, up to about $5\%$ MSE reduction) and a controlled synthetic
 drift sweep in which \arevin's benefit and its learned gate both rise
-monotonically with injected non-stationarity. Our analysis also shows that
-\arevin\ must be initialized to avoid a gradient trap that otherwise keeps it
-dormant. All components are independently ablatable along the nesting
+monotonically with injected non-stationarity. All components are independently
+ablatable along the nesting
 $\text{Linear} \subseteq \text{RLinear} \subseteq \method$, and the entire study
 is reproducible on commodity hardware.
 \end{abstract}
