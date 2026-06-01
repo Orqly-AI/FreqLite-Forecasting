@@ -101,29 +101,28 @@ Forecasting}
             country={Pakistan}}
 
 \begin{abstract}
-Long-term time-series forecasting requires models that are both accurate and
-efficient enough to deploy on commodity hardware. Lightweight linear forecasters
-are remarkably strong in this regime, yet they leave two openings: reversible
-instance normalization (RevIN) de-normalizes the entire horizon with a single
-lookback statistic, which is increasingly inaccurate under non-stationarity, and
-time-domain trend/seasonal decomposition relies on a fixed, non-adaptive filter.
-We present \method, an ultra-lightweight, channel-independent frequency-decomposed
-linear forecaster: a learnable, lossless, partition-of-unity spectral filter
-splits the input into bands that are forecast by per-band linear heads and, unlike
-low-pass-truncation approaches, the high-frequency band is retained and modeled.
-\method\ is the best lightweight model on the standard long-term forecasting
-benchmarks and, at long lookback ($L{=}336$), attains a lower average error than a
-PatchTST Transformer ($0.3244$ vs.\ $0.3587$ MSE) while using about $4\times$
-fewer parameters, $2.2\times$ less memory, and $2.2\times$ less time per epoch on
-a single 4\,GB laptop GPU; although modest in magnitude, its improvements are
-statistically significant under paired Wilcoxon tests across all matched cells
-($p \approx 10^{-6}$). We further introduce Adaptive Reversible Instance
-Normalization (\arevin), a \emph{regime-adaptive} reversible normalization that
-strictly generalizes RevIN (recovered exactly when its gate is closed), engages
-under non-stationarity, and reduces to RevIN without harm on stationary data. We
-validate this regime-adaptive behavior on both a real strongly non-stationary
-dataset (ILI, up to about $5\%$ MSE reduction) and a controlled synthetic
-drift sweep in which \arevin's benefit and its learned gate both rise
+Long-term time-series forecasting requires models both accurate and efficient
+enough for commodity hardware. Lightweight linear forecasters are strong in this
+regime, yet leave two openings: reversible instance normalization (RevIN)
+de-normalizes the entire horizon with a single lookback statistic, which is
+inaccurate under non-stationarity, and time-domain trend/seasonal decomposition
+relies on a fixed, non-adaptive filter. We present \method, an ultra-lightweight,
+channel-independent frequency-decomposed linear forecaster: a learnable, lossless,
+partition-of-unity spectral filter splits the input into bands forecast by
+per-band linear heads and, unlike low-pass-truncation approaches, the
+high-frequency band is retained and modeled. \method\ is the best lightweight
+model on standard long-term forecasting benchmarks and, at long lookback
+($L{=}336$), attains lower average error than a PatchTST Transformer
+($0.3244$ vs.\ $0.3587$ MSE) while using about $4\times$ fewer parameters,
+$2.2\times$ less memory, and $2.2\times$ less time per epoch on a single 4\,GB
+laptop GPU; though modest, its improvements are statistically significant under
+paired Wilcoxon tests across all matched cells ($p \approx 10^{-6}$). We further
+introduce Adaptive Reversible Instance Normalization (\arevin), a
+\emph{regime-adaptive} reversible normalization that strictly generalizes RevIN
+(recovered exactly when its gate is closed), engages under non-stationarity, and
+reduces to RevIN without harm on stationary data. We validate this on a real
+strongly non-stationary dataset (ILI, up to about $5\%$ MSE reduction) and a
+controlled synthetic drift sweep in which \arevin's benefit and learned gate rise
 monotonically with injected non-stationarity. All components are independently
 ablatable along the nesting
 $\text{Linear} \subseteq \text{RLinear} \subseteq \method$, and the entire study
