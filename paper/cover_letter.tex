@@ -1,0 +1,17 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\pagestyle{empty}
+\begin{document}
+\noindent To: The Editor-in-Chief\
+\textit{Knowledge-Based Systems} (Elsevier)\[6pt]
+Dear Editor,\[4pt]
+We are pleased to submit our manuscript, \textbf{FreqLite: A Lightweight Frequency-Decomposed Linear Model with Adaptive Reversible Normalization for Robust Long-Term Time-Series Forecasting,''} for consideration as an original research article in \textit{Knowledge-Based Systems}.\[4pt]
+Long-term time-series forecasting underpins decision-making across energy, weather, traffic, and industrial monitoring. Recent work shows that lightweight linear models can match or exceed far heavier Transformers on standard benchmarks. Our work advances this direction with a model that is both competitive in accuracy and exceptionally cheap to train and deploy: the entire study is conducted on a single 4\,GB consumer laptop GPU.\[4pt]
+The manuscript makes three contributions: (1) \textbf{FreqLite}, an ultra-lightweight, channel-independent frequency-decomposed linear forecaster that retains and models the high-frequency band rather than discarding it; it is the strongest lightweight model on standard benchmarks and, at long lookback, attains lower average error than a PatchTST Transformer while using about 4x fewer parameters and 2.2x less memory and training time, with improvements that are statistically significant (paired Wilcoxon, $p \approx 10^{-6}$). (2) \textbf{A-RevIN}, a regime-adaptive normalization that strictly generalizes RevIN, engaging under non-stationarity (validated on ILI and a controlled synthetic drift study) and reducing to RevIN without harm otherwise. (3) A \textbf{fully reproducible accuracy--efficiency study} on commodity hardware, with all baselines re-implemented and re-run under identical conditions.\[4pt]
+We report results honestly, including settings where FreqLite does not lead, and are explicit that the headline strengths on stationary benchmarks are efficiency and the long-lookback result. This manuscript is original, has not been published previously, and is not under consideration elsewhere. A preprint is available on arXiv (ID to be inserted). All authors approved the submission; the authors declare no competing interests and received no specific funding.\[6pt]
+Sincerely,\[2pt]
+Mirza Samad Ahmed Baig (Corresponding author), Fandaqah, Al Khobar, Saudi Arabia\
+\href{mailto:MirzaSamadcontact@gmail.com}{MirzaSamadcontact@gmail.com}\[2pt]
+Syeda Anshrah Gillani, Hamdard University, Karachi, Pakistan
+\end{document}
