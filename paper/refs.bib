@@ -1,8 +1,11 @@
 % =====================================================================
 % refs.bib  --  FreqLite manuscript
 % Owner: litreview.  Coordinate citation-key changes via SendMessage.
-% Every entry below was verified against the official venue / arXiv
-% (authors, title, venue, year, pages) -- no approximate citations.
+% Final pre-submission pass: every entry re-verified against the
+% OFFICIAL source (authors/title/venue/year/vol/no/pages). DOIs added
+% only where a real DOI exists and resolves; otherwise eprint (arXiv)
+% and/or url to the official proceedings/OpenReview page. No DOI was
+% fabricated or guessed.
 % =====================================================================
 
 % ---------------------------------------------------------------------
@@ -21,10 +24,12 @@
 }
 
 @article{li2023rlinear,
-  title   = {Revisiting Long-term Time Series Forecasting: An Investigation on Linear Mapping},
-  author  = {Li, Zhe and Qi, Shiyi and Li, Yiduo and Xu, Zenglin},
-  journal = {arXiv preprint arXiv:2305.10721},
-  year    = {2023}
+  title         = {Revisiting Long-term Time Series Forecasting: An Investigation on Linear Mapping},
+  author        = {Li, Zhe and Qi, Shiyi and Li, Yiduo and Xu, Zenglin},
+  journal       = {arXiv preprint arXiv:2305.10721},
+  eprint        = {2305.10721},
+  archivePrefix = {arXiv},
+  year          = {2023}
 }
 
 % ---------------------------------------------------------------------
@@ -35,15 +40,19 @@
   title     = {Reversible Instance Normalization for Accurate Time-Series Forecasting against Distribution Shift},
   author    = {Kim, Taesung and Kim, Jinhee and Tae, Yunwon and Park, Cheonbok and Choi, Jang-Ho and Choo, Jaegul},
   booktitle = {International Conference on Learning Representations (ICLR)},
-  year      = {2022}
+  year      = {2022},
+  url       = {https://openreview.net/forum?id=cGDAkQo1C0p}
 }
 
 @inproceedings{liu2022nonstationary,
-  title     = {Non-stationary Transformers: Exploring the Stationarity in Time Series Forecasting},
-  author    = {Liu, Yong and Wu, Haixu and Wang, Jianmin and Long, Mingsheng},
-  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
-  volume    = {35},
-  year      = {2022}
+  title         = {Non-stationary Transformers: Exploring the Stationarity in Time Series Forecasting},
+  author        = {Liu, Yong and Wu, Haixu and Wang, Jianmin and Long, Mingsheng},
+  booktitle     = {Advances in Neural Information Processing Systems (NeurIPS)},
+  volume        = {35},
+  year          = {2022},
+  eprint        = {2205.14415},
+  archivePrefix = {arXiv},
+  url           = {https://proceedings.neurips.cc/paper_files/paper/2022/hash/4054556fcaa934b0bf76da52cf4f92cb-Abstract-Conference.html}
 }
 
 % ---------------------------------------------------------------------
@@ -51,60 +60,83 @@
 % ---------------------------------------------------------------------
 
 @inproceedings{wu2021autoformer,
-  title     = {Autoformer: Decomposition Transformers with Auto-Correlation for Long-Term Series Forecasting},
-  author    = {Wu, Haixu and Xu, Jiehui and Wang, Jianmin and Long, Mingsheng},
-  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
-  volume    = {34},
-  year      = {2021}
+  title         = {Autoformer: Decomposition Transformers with Auto-Correlation for Long-Term Series Forecasting},
+  author        = {Wu, Haixu and Xu, Jiehui and Wang, Jianmin and Long, Mingsheng},
+  booktitle     = {Advances in Neural Information Processing Systems (NeurIPS)},
+  volume        = {34},
+  year          = {2021},
+  eprint        = {2106.13008},
+  archivePrefix = {arXiv},
+  url           = {https://proceedings.neurips.cc/paper/2021/hash/bcc0d400288793e8bdcd7c19a8ac0c2b-Abstract.html}
 }
 
 @inproceedings{zhou2022fedformer,
-  title     = {{FEDformer}: Frequency Enhanced Decomposed Transformer for Long-term Series Forecasting},
-  author    = {Zhou, Tian and Ma, Ziqing and Wen, Qingsong and Wang, Xue and Sun, Liang and Jin, Rong},
-  booktitle = {Proceedings of the 39th International Conference on Machine Learning (ICML)},
-  series    = {Proceedings of Machine Learning Research},
-  volume    = {162},
-  pages     = {27268--27286},
-  year      = {2022}
+  title         = {{FEDformer}: Frequency Enhanced Decomposed Transformer for Long-term Series Forecasting},
+  author        = {Zhou, Tian and Ma, Ziqing and Wen, Qingsong and Wang, Xue and Sun, Liang and Jin, Rong},
+  booktitle     = {Proceedings of the 39th International Conference on Machine Learning (ICML)},
+  series        = {Proceedings of Machine Learning Research},
+  volume        = {162},
+  pages         = {27268--27286},
+  year          = {2022},
+  eprint        = {2201.12740},
+  archivePrefix = {arXiv},
+  url           = {https://proceedings.mlr.press/v162/zhou22g.html}
 }
 
 @inproceedings{zhou2022film,
-  title     = {{FiLM}: Frequency improved Legendre Memory Model for Long-term Time Series Forecasting},
-  author    = {Zhou, Tian and Ma, Ziqing and Wang, Xue and Wen, Qingsong and Sun, Liang and Yao, Tao and Yin, Wotao and Jin, Rong},
-  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
-  volume    = {35},
-  year      = {2022}
+  title         = {{FiLM}: Frequency improved Legendre Memory Model for Long-term Time Series Forecasting},
+  author        = {Zhou, Tian and Ma, Ziqing and Wang, Xue and Wen, Qingsong and Sun, Liang and Yao, Tao and Yin, Wotao and Jin, Rong},
+  booktitle     = {Advances in Neural Information Processing Systems (NeurIPS)},
+  volume        = {35},
+  year          = {2022},
+  eprint        = {2205.08897},
+  archivePrefix = {arXiv},
+  url           = {https://proceedings.neurips.cc/paper_files/paper/2022/hash/524ef58c2bd075775861234266e5e020-Abstract-Conference.html}
 }
 
 @inproceedings{wu2023timesnet,
-  title     = {{TimesNet}: Temporal 2D-Variation Modeling for General Time Series Analysis},
-  author    = {Wu, Haixu and Hu, Tengge and Liu, Yong and Zhou, Hang and Wang, Jianmin and Long, Mingsheng},
-  booktitle = {International Conference on Learning Representations (ICLR)},
-  year      = {2023}
+  title         = {{TimesNet}: Temporal 2D-Variation Modeling for General Time Series Analysis},
+  author        = {Wu, Haixu and Hu, Tengge and Liu, Yong and Zhou, Hang and Wang, Jianmin and Long, Mingsheng},
+  booktitle     = {International Conference on Learning Representations (ICLR)},
+  year          = {2023},
+  eprint        = {2210.02186},
+  archivePrefix = {arXiv},
+  url           = {https://openreview.net/forum?id=ju_Uqw384Oq}
 }
 
 @inproceedings{yi2023frets,
-  title     = {Frequency-domain {MLPs} are More Effective Learners in Time Series Forecasting},
-  author    = {Yi, Kun and Zhang, Qi and Fan, Wei and Wang, Shoujin and Wang, Pengyang and He, Hui and Lian, Defu and An, Ning and Cao, Longbing and Niu, Zhendong},
-  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
-  volume    = {36},
-  year      = {2023}
+  title         = {Frequency-domain {MLPs} are More Effective Learners in Time Series Forecasting},
+  author        = {Yi, Kun and Zhang, Qi and Fan, Wei and Wang, Shoujin and Wang, Pengyang and He, Hui and Lian, Defu and An, Ning and Cao, Longbing and Niu, Zhendong},
+  booktitle     = {Advances in Neural Information Processing Systems (NeurIPS)},
+  volume        = {36},
+  year          = {2023},
+  eprint        = {2311.06184},
+  archivePrefix = {arXiv},
+  url           = {https://proceedings.neurips.cc/paper_files/paper/2023/hash/f1d16af76939f476b5f040fd1398c0a3-Abstract-Conference.html}
 }
 
 % ---- Closest prior work: lightweight / frequency-domain linear models ----
 
 @inproceedings{xu2024fits,
-  title     = {{FITS}: Modeling Time Series with $10k$ Parameters},
-  author    = {Xu, Zhijian and Zeng, Ailing and Xu, Qiang},
-  booktitle = {International Conference on Learning Representations (ICLR)},
-  year      = {2024}
+  title         = {{FITS}: Modeling Time Series with $10k$ Parameters},
+  author        = {Xu, Zhijian and Zeng, Ailing and Xu, Qiang},
+  booktitle     = {International Conference on Learning Representations (ICLR)},
+  year          = {2024},
+  eprint        = {2307.03756},
+  archivePrefix = {arXiv},
+  url           = {https://openreview.net/forum?id=bWcnvZ3qMb}
 }
 
-@article{liu2025freqmoe,
-  title   = {{FreqMoE}: Enhancing Time Series Forecasting through Frequency Decomposition Mixture of Experts},
-  author  = {Liu, Ziqi},
-  journal = {arXiv preprint arXiv:2501.15125},
-  year    = {2025}
+@inproceedings{liu2025freqmoe,
+  title         = {{FreqMoE}: Enhancing Time Series Forecasting through Frequency Decomposition Mixture of Experts},
+  author        = {Liu, Ziqi},
+  booktitle     = {Proceedings of the 28th International Conference on Artificial Intelligence and Statistics (AISTATS)},
+  series        = {Proceedings of Machine Learning Research},
+  volume        = {258},
+  year          = {2025},
+  eprint        = {2501.15125},
+  archivePrefix = {arXiv},
+  url           = {https://proceedings.mlr.press/v258/liu25i.html}
 }
 
 % ---------------------------------------------------------------------
@@ -123,17 +155,23 @@
 }
 
 @inproceedings{nie2023patchtst,
-  title     = {A Time Series is Worth 64 Words: Long-term Forecasting with Transformers},
-  author    = {Nie, Yuqi and Nguyen, Nam H. and Sinthong, Phanwadee and Kalagnanam, Jayant},
-  booktitle = {International Conference on Learning Representations (ICLR)},
-  year      = {2023}
+  title         = {A Time Series is Worth 64 Words: Long-term Forecasting with Transformers},
+  author        = {Nie, Yuqi and Nguyen, Nam H. and Sinthong, Phanwadee and Kalagnanam, Jayant},
+  booktitle     = {International Conference on Learning Representations (ICLR)},
+  year          = {2023},
+  eprint        = {2211.14730},
+  archivePrefix = {arXiv},
+  url           = {https://openreview.net/forum?id=Jbdc0vTOcol}
 }
 
 @inproceedings{liu2024itransformer,
-  title     = {{iTransformer}: Inverted Transformers Are Effective for Time Series Forecasting},
-  author    = {Liu, Yong and Hu, Tengge and Zhang, Haoran and Wu, Haixu and Wang, Shiyu and Ma, Lintao and Long, Mingsheng},
-  booktitle = {International Conference on Learning Representations (ICLR)},
-  year      = {2024}
+  title         = {{iTransformer}: Inverted Transformers Are Effective for Time Series Forecasting},
+  author        = {Liu, Yong and Hu, Tengge and Zhang, Haoran and Wu, Haixu and Wang, Shiyu and Ma, Lintao and Long, Mingsheng},
+  booktitle     = {International Conference on Learning Representations (ICLR)},
+  year          = {2024},
+  eprint        = {2310.06625},
+  archivePrefix = {arXiv},
+  url           = {https://openreview.net/forum?id=JePfAI8fah}
 }
 
 % ---------------------------------------------------------------------
@@ -141,17 +179,23 @@
 % ---------------------------------------------------------------------
 
 @article{chen2023tsmixer,
-  title   = {{TSMixer}: An All-MLP Architecture for Time Series Forecasting},
-  author  = {Chen, Si-An and Li, Chun-Liang and Yoder, Nate and Arik, Sercan O. and Pfister, Tomas},
-  journal = {Transactions on Machine Learning Research (TMLR)},
-  year    = {2023}
+  title         = {{TSMixer}: An All-MLP Architecture for Time Series Forecasting},
+  author        = {Chen, Si-An and Li, Chun-Liang and Yoder, Nate and Arik, Sercan O. and Pfister, Tomas},
+  journal       = {Transactions on Machine Learning Research (TMLR)},
+  year          = {2023},
+  eprint        = {2303.06053},
+  archivePrefix = {arXiv},
+  url           = {https://openreview.net/forum?id=wbpxTuXgm0}
 }
 
 @inproceedings{wang2024timemixer,
-  title     = {{TimeMixer}: Decomposable Multiscale Mixing for Time Series Forecasting},
-  author    = {Wang, Shiyu and Wu, Haixu and Shi, Xiaoming and Hu, Tengge and Luo, Huakun and Ma, Lintao and Zhang, James Y. and Zhou, Jun},
-  booktitle = {International Conference on Learning Representations (ICLR)},
-  year      = {2024}
+  title         = {{TimeMixer}: Decomposable Multiscale Mixing for Time Series Forecasting},
+  author        = {Wang, Shiyu and Wu, Haixu and Shi, Xiaoming and Hu, Tengge and Luo, Huakun and Ma, Lintao and Zhang, James Y. and Zhou, Jun},
+  booktitle     = {International Conference on Learning Representations (ICLR)},
+  year          = {2024},
+  eprint        = {2405.14616},
+  archivePrefix = {arXiv},
+  url           = {https://openreview.net/forum?id=7oLshfEIC2}
 }
 
 % ---------------------------------------------------------------------
@@ -174,7 +218,8 @@
   author    = {Strubell, Emma and Ganesh, Ananya and McCallum, Andrew},
   booktitle = {Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics (ACL)},
   pages     = {3645--3650},
-  year      = {2019}
+  year      = {2019},
+  doi       = {10.18653/v1/P19-1355}
 }
 
 % ---------------------------------------------------------------------
@@ -182,16 +227,20 @@
 % ---------------------------------------------------------------------
 
 @inproceedings{vaswani2017attention,
-  title     = {Attention Is All You Need},
-  author    = {Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N. and Kaiser, Lukasz and Polosukhin, Illia},
-  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
-  volume    = {30},
-  year      = {2017}
+  title         = {Attention Is All You Need},
+  author        = {Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N. and Kaiser, Lukasz and Polosukhin, Illia},
+  booktitle     = {Advances in Neural Information Processing Systems (NeurIPS)},
+  volume        = {30},
+  year          = {2017},
+  eprint        = {1706.03762},
+  archivePrefix = {arXiv}
 }
 
 @inproceedings{kingma2015adam,
-  title     = {Adam: A Method for Stochastic Optimization},
-  author    = {Kingma, Diederik P. and Ba, Jimmy},
-  booktitle = {International Conference on Learning Representations (ICLR)},
-  year      = {2015}
+  title         = {Adam: A Method for Stochastic Optimization},
+  author        = {Kingma, Diederik P. and Ba, Jimmy},
+  booktitle     = {International Conference on Learning Representations (ICLR)},
+  year          = {2015},
+  eprint        = {1412.6980},
+  archivePrefix = {arXiv}
 }
