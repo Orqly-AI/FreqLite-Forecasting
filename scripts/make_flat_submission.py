@@ -75,6 +75,47 @@ def _resolve_iffileexists(s):
     return "".join(out)
 
 
+def _strip_comments(text):
+    """Remove LaTeX comments while preserving output.
+    - A line that is only whitespace + a comment is dropped entirely.
+    - An inline comment has its text removed; a bare trailing '%' is kept because
+      it suppresses the end-of-line space (line continuation) and removing it
+      could alter spacing. '\\%' (literal percent) is never touched.
+    """
+    out_lines = []
+    for line in text.split("\n"):
+        # find first unescaped '%'
+        p, n = -1, len(line)
+        k = 0
+        while k < n:
+            if line[k] == "\\":
+                k += 2
+                continue
+            if line[k] == "%":
+                p = k
+                break
+            k += 1
+        if p == -1:
+            out_lines.append(line)
+            continue
+        prefix = line[:p]
+        if prefix.strip() == "":
+            continue                       # full-line comment -> drop
+        # inline comment: drop the comment text, keep a single '%' for continuation
+        out_lines.append(prefix + "%")
+    # collapse 3+ blank lines to a single blank line for tidiness
+    cleaned, blank = [], 0
+    for ln in out_lines:
+        if ln.strip() == "":
+            blank += 1
+            if blank <= 1:
+                cleaned.append(ln)
+        else:
+            blank = 0
+            cleaned.append(ln)
+    return "\n".join(cleaned)
+
+
 def main():
     if OUT.exists():
         shutil.rmtree(OUT)
@@ -98,8 +139,38 @@ def main():
         return p.read_text(encoding="utf-8") if p.exists() else m.group(0)
     text = re.sub(r"\\input\{\.\./results/tables/([^}]+)\}", tbl, text)
 
-    # 3) flatten figure paths: ../results/figures/NAME -> NAME
-    text = text.replace("../results/figures/", "")
+    # 2b) externalize the TikZ architecture as Figure 1 (fig1.pdf): write a
+    #     standalone .tex for it, and replace the inline \resizebox{...}{tikz...}
+    #     in the body with \includegraphics{fig1.pdf}. This makes ALL figures
+    #     external files fig1..fig5 matching their figure numbers.
+    tikz = re.search(r"\\begin\{tikzpicture\}.*?\\end\{tikzpicture\}", text, re.DOTALL)
+    if tikz:
+        standalone = (
+            "\\documentclass[border=2pt]{standalone}\n"
+            "\\usepackage{amsmath,amssymb,amsfonts}\n"
+            "\\usepackage{tikz}\n"
+            "\\usetikzlibrary{positioning,calc,arrows.meta,fit,backgrounds}\n"
+            "\\newcommand{\\method}{\\textsc{FreqLite}}\n"
+            "\\newcommand{\\bs}{\\mathbf{s}}\n"
+            "\\newcommand{\\by}{\\mathbf{y}}\n"
+            "\\newcommand{\\R}{\\mathbb{R}}\n"
+            "\\begin{document}\n" + tikz.group(0) + "\n\\end{document}\n")
+        (OUT / "_fig1.tex").write_text(standalone, encoding="utf-8")
+        text = re.sub(
+            r"\\resizebox\{\\linewidth\}\{!\}\{%.*?\\end\{tikzpicture\}%\s*\}",
+            lambda _m: r"\includegraphics[width=\linewidth]{fig1.pdf}",
+            text, flags=re.DOTALL)
+
+    # 3) flatten + rename figure files to fig2..fig5 (Figure 1 is the TikZ above)
+    FIG_RENAME = {
+        "learned_filter.pdf":   "fig2.pdf",
+        "arevin_profile.pdf":   "fig3.pdf",
+        "synthetic_drift.pdf":  "fig4.pdf",
+        "accuracy_vs_params.pdf": "fig5.pdf",
+    }
+    for old, new in FIG_RENAME.items():
+        text = text.replace("../results/figures/" + old, new)
+    text = text.replace("../results/figures/", "")  # any stragglers
 
     # 4) resolve \IfFileExists{path}{TRUE}{FALSE} -> TRUE branch, by brace
     #    matching (do NOT redefine \IfFileExists globally -- pgf/TikZ uses it
@@ -112,17 +183,26 @@ def main():
     text = re.sub(r"\\bibliographystyle\{[^}]*\}\s*\\bibliography\{[^}]*\}",
                   lambda _m: bbl, text)
 
+    # 6) strip comments (full-line comments removed; inline comment text removed,
+    #    bare continuation '%' preserved; '\%' untouched)
+    text = _strip_comments(text)
+
     (OUT / "main.tex").write_text(text, encoding="utf-8")
 
-    # copy the 4 figures (flat)
-    figs = ["learned_filter.pdf", "arevin_profile.pdf", "accuracy_vs_params.pdf",
-            "synthetic_drift.pdf"]
+    # copy figures with their fig2..fig5 names (fig1.pdf is compiled from _fig1.tex)
+    FIG_RENAME = {
+        "learned_filter.pdf":   "fig2.pdf",
+        "arevin_profile.pdf":   "fig3.pdf",
+        "synthetic_drift.pdf":  "fig4.pdf",
+        "accuracy_vs_params.pdf": "fig5.pdf",
+    }
     n = 0
-    for f in figs:
-        if (FIGS / f).exists():
-            shutil.copy2(FIGS / f, OUT / f); n += 1
+    for old, new in FIG_RENAME.items():
+        if (FIGS / old).exists():
+            shutil.copy2(FIGS / old, OUT / new); n += 1
 
-    print(f"wrote {OUT}\\main.tex (self-contained) + {n} figures")
+    print(f"wrote {OUT}\\main.tex (self-contained) + {n} figures (fig2-fig5)")
+    print("Compile _fig1.tex -> fig1.pdf, then main.tex.")
     print("UPLOAD THESE FILES (all flat, no folders):")
     for p in sorted(OUT.iterdir()):
         print("  ", p.name)
