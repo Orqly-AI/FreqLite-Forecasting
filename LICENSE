@@ -1,21 +1,185 @@
-MIT License
-
+Orqly-AI Restricted Attribution License (ORAL) v1.0
 Copyright (c) 2026 Mirza Samad Ahmed Baig and Syeda Anshrah Gillani (Orqly-AI)
+All rights reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+================================================================================
+PREAMBLE
+================================================================================
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+This license governs the use, reproduction, modification, distribution, and
+any other interaction with the software, source code, documentation, research
+paper(s), datasets, models, and any associated materials (collectively, the
+"Work") authored by Mirza Samad Ahmed Baig and Syeda Anshrah Gillani under
+the Orqly-AI project.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+By accessing, using, copying, or building upon any part of this Work, you
+agree to be bound by the terms of this license.
+
+================================================================================
+SECTION 1 — DEFINITIONS
+================================================================================
+
+1.1 "Work" refers to the software, source code, documentation, research
+    paper(s), figures, datasets, models, and any other materials covered
+    under this license.
+
+1.2 "Research Paper" refers to any academic paper, preprint, manuscript,
+    poster, or written research output associated with this project.
+
+1.3 "Authors" refers to Mirza Samad Ahmed Baig and Syeda Anshrah Gillani
+    (Orqly-AI).
+
+1.4 "You" or "Licensee" refers to any individual, organization, or legal
+    entity exercising rights under this license.
+
+1.5 "Derivative Work" means any work that is based on, incorporates, adapts,
+    or is derived from the Work or any portion thereof.
+
+================================================================================
+SECTION 2 — PERMISSIONS (WHAT YOU MAY DO)
+================================================================================
+
+Subject to full compliance with the conditions in Section 3, You are granted
+a non-exclusive, non-transferable, revocable permission to:
+
+2.1 Use the software for personal, academic, or non-commercial purposes.
+
+2.2 Modify the source code for personal or research use.
+
+2.3 Distribute the Work or Derivative Works, provided all conditions in
+    Section 3 are strictly met.
+
+2.4 Reference or cite the Research Paper in academic work, provided proper
+    citation is given (see Section 3.2).
+
+================================================================================
+SECTION 3 — CONDITIONS (WHAT YOU MUST DO)
+================================================================================
+
+3.1 MANDATORY ATTRIBUTION — SOFTWARE & CODE
+
+    Any use, reproduction, modification, distribution, or public display of
+    the software or source code — in whole or in part — MUST include all of
+    the following in a clearly visible location (e.g., README, source file
+    headers, documentation, UI "About" section, or credits page):
+
+        Original Work by:
+        Mirza Samad Ahmed Baig and Syeda Anshrah Gillani (Orqly-AI)
+        Copyright (c) 2026
+        Source: [original repository URL]
+
+    Attribution must not be removed, obscured, minimized, or misrepresented
+    under any circumstances.
+
+3.2 MANDATORY ATTRIBUTION — RESEARCH PAPER
+
+    Any academic work, publication, presentation, blog post, report, or
+    derivative that references, builds upon, or is informed by the Research
+    Paper associated with this Work MUST include a proper citation in the
+    standard format of the relevant academic venue (e.g., IEEE, APA, ACM),
+    clearly crediting the Authors.
+
+    Failure to cite the Research Paper when required constitutes a violation
+    of this license and applicable copyright law.
+
+3.3 PROHIBITION ON REPRODUCTION OF THE RESEARCH PAPER
+
+    The Research Paper (including any manuscript, preprint, figures, tables,
+    or written content therein) may NOT be:
+
+      (a) Copied, reproduced, or duplicated in whole or in part;
+      (b) Redistributed through any channel, platform, or medium;
+      (c) Translated, adapted, or reformatted;
+      (d) Included in datasets, corpora, training data, or AI/ML pipelines;
+      (e) Published or re-published in any form;
+
+    without the express prior written permission of the Authors.
+
+3.4 DERIVATIVE WORKS
+
+    Any Derivative Work must:
+
+      (a) Clearly state that it is derived from the original Work by the Authors;
+      (b) Include the full attribution notice specified in Section 3.1;
+      (c) Be distributed under terms no less restrictive than this license;
+      (d) Not imply endorsement by the Authors without written consent.
+
+3.5 COMMERCIAL USE
+
+    Any commercial use of the Work or any Derivative Work requires explicit
+    prior written permission from the Authors. Unauthorized commercial use is
+    strictly prohibited.
+
+================================================================================
+SECTION 4 — RESTRICTIONS (WHAT YOU MAY NOT DO)
+================================================================================
+
+You may NOT:
+
+4.1 Remove, alter, or obscure any copyright notice, attribution notice, or
+    this license text from any copy of the Work.
+
+4.2 Reproduce, copy, distribute, or publish the Research Paper in any form
+    without prior written permission from the Authors (see Section 3.3).
+
+4.3 Use the Authors' names, project name (Orqly-AI), or any associated
+    trademarks to endorse or promote products or services derived from this
+    Work without prior written consent.
+
+4.4 Sublicense the Work to any third party under terms that conflict with
+    or weaken the protections granted by this license.
+
+4.5 Use the Work in any manner that violates applicable laws or regulations.
+
+================================================================================
+SECTION 5 — DISCLAIMER OF WARRANTIES
+================================================================================
+
+THE WORK IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. IN NO EVENT SHALL
+THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING
+FROM, OUT OF, OR IN CONNECTION WITH THE WORK OR THE USE OR OTHER DEALINGS
+IN THE WORK.
+
+================================================================================
+SECTION 6 — TERMINATION
+================================================================================
+
+6.1 This license and all permissions granted hereunder terminate automatically
+    upon any breach of the conditions set forth in Section 3 or Section 4.
+
+6.2 Upon termination, You must immediately cease all use, distribution, and
+    reproduction of the Work and destroy any copies in your possession.
+
+6.3 Sections 4, 5, and 7 survive termination of this license.
+
+================================================================================
+SECTION 7 — GOVERNING LAW & ENFORCEMENT
+================================================================================
+
+7.1 This license shall be governed by and construed in accordance with
+    applicable international copyright law and the laws of the jurisdiction
+    in which the Authors reside.
+
+7.2 Any unauthorized use, reproduction, or distribution of the Work — in
+    violation of this license — may subject the violator to civil and/or
+    criminal liability under applicable copyright law.
+
+7.3 The Authors reserve the right to seek injunctive relief, damages, and
+    any other remedies available under law for any violation of this license.
+
+================================================================================
+SECTION 8 — CONTACT & PERMISSIONS
+================================================================================
+
+For permissions beyond the scope of this license — including commercial use,
+republication of the Research Paper, or any special use case — contact the
+Authors directly:
+
+    Mirza Samad Ahmed Baig & Syeda Anshrah Gillani
+    Project: Orqly-AI
+    
+================================================================================
+END OF LICENSE
+================================================================================
