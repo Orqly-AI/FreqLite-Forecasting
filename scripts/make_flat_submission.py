@@ -139,30 +139,9 @@ def main():
         return p.read_text(encoding="utf-8") if p.exists() else m.group(0)
     text = re.sub(r"\\input\{\.\./results/tables/([^}]+)\}", tbl, text)
 
-    # 2b) externalize the TikZ architecture as Figure 1 (fig1.pdf): write a
-    #     standalone .tex for it, and replace the inline \resizebox{...}{tikz...}
-    #     in the body with \includegraphics{fig1.pdf}. This makes ALL figures
-    #     external files fig1..fig5 matching their figure numbers.
-    tikz = re.search(r"\\begin\{tikzpicture\}.*?\\end\{tikzpicture\}", text, re.DOTALL)
-    if tikz:
-        standalone = (
-            "\\documentclass[border=2pt]{standalone}\n"
-            "\\usepackage{amsmath,amssymb,amsfonts}\n"
-            "\\usepackage{tikz}\n"
-            "\\usetikzlibrary{positioning,calc,arrows.meta,fit,backgrounds}\n"
-            "\\newcommand{\\method}{\\textsc{FreqLite}}\n"
-            "\\newcommand{\\bs}{\\mathbf{s}}\n"
-            "\\newcommand{\\by}{\\mathbf{y}}\n"
-            "\\newcommand{\\R}{\\mathbb{R}}\n"
-            "\\begin{document}\n" + tikz.group(0) + "\n\\end{document}\n")
-        (OUT / "_fig1.tex").write_text(standalone, encoding="utf-8")
-        text = re.sub(
-            r"\\resizebox\{\\linewidth\}\{!\}\{%.*?\\end\{tikzpicture\}%\s*\}",
-            lambda _m: r"\includegraphics[width=\linewidth]{fig1.pdf}",
-            text, flags=re.DOTALL)
-
-    # 3) flatten + rename figure files to fig2..fig5 (Figure 1 is the TikZ above)
+    # 3) flatten + rename every figure file to fig1..fig5 (matching figure order)
     FIG_RENAME = {
+        "architecture.pdf":     "fig1.pdf",
         "learned_filter.pdf":   "fig2.pdf",
         "arevin_profile.pdf":   "fig3.pdf",
         "synthetic_drift.pdf":  "fig4.pdf",
@@ -189,8 +168,9 @@ def main():
 
     (OUT / "main.tex").write_text(text, encoding="utf-8")
 
-    # copy figures with their fig2..fig5 names (fig1.pdf is compiled from _fig1.tex)
+    # copy every figure with its fig1..fig5 name
     FIG_RENAME = {
+        "architecture.pdf":     "fig1.pdf",
         "learned_filter.pdf":   "fig2.pdf",
         "arevin_profile.pdf":   "fig3.pdf",
         "synthetic_drift.pdf":  "fig4.pdf",
@@ -201,8 +181,7 @@ def main():
         if (FIGS / old).exists():
             shutil.copy2(FIGS / old, OUT / new); n += 1
 
-    print(f"wrote {OUT}\\main.tex (self-contained) + {n} figures (fig2-fig5)")
-    print("Compile _fig1.tex -> fig1.pdf, then main.tex.")
+    print(f"wrote {OUT}\\main.tex (self-contained) + {n} figures (fig1-fig5)")
     print("UPLOAD THESE FILES (all flat, no folders):")
     for p in sorted(OUT.iterdir()):
         print("  ", p.name)

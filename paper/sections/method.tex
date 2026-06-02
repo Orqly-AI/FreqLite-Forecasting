@@ -47,52 +47,10 @@ and \arevin\ denormalization.
 
 \begin{figure}[t]
   \centering
-  \resizebox{\linewidth}{!}{%
-  \begin{tikzpicture}[
-    >={Latex[length=2mm]},
-    node distance=6mm and 7mm,
-    box/.style={draw, rounded corners=2pt, minimum height=10mm, align=center,
-                font=\footnotesize, inner sep=3pt, fill=blue!4},
-    norm/.style={box, fill=orange!12},
-    head/.style={box, fill=green!8},
-    op/.style={draw, circle, minimum size=7mm, font=\small, inner sep=0pt, fill=gray!8},
-    io/.style={font=\small\itshape},
-    arr/.style={->, thick},
-  ]
-    % main spine
-    \node[io] (in) {$\bs\!\in\!\R^{L}$};
-    \node[norm, right=of in]   (nrm)  {A-RevIN\\normalize};
-    \node[box,  right=of nrm]  (fft)  {\texttt{rFFT}};
-    \node[box,  right=of fft]  (mask) {learnable\\masks $\{m_k\}$\\(part.\ of unity)};
-    % two band branches
-    \node[box,  above right=5mm and 9mm of mask] (irL)  {\texttt{iRFFT}\\low band};
-    \node[box,  below right=5mm and 9mm of mask] (irH)  {\texttt{iRFFT}\\high band};
-    \node[head, right=of irL]  (linL) {Linear\\$\mathbf{W}_1\!\in\!\R^{H\times L}$};
-    \node[head, right=of irH]  (linH) {Linear\\$\mathbf{W}_2\!\in\!\R^{H\times L}$};
-    % merge + denorm + out
-    \node[op] (sum) at ($(linL)!0.5!(linH)+(2.0cm,0)$) {$\Sigma$};
-    \node[norm, right=8mm of sum] (dn) {A-RevIN\\denormalize};
-    \node[io, right=6mm of dn] (out) {$\hat{\by}\!\in\!\R^{H}$};
-    % arrows
-    \draw[arr] (in) -- (nrm);
-    \draw[arr] (nrm) -- (fft);
-    \draw[arr] (fft) -- (mask);
-    \draw[arr] (mask.east) -- (irL.west);
-    \draw[arr] (mask.east) -- (irH.west);
-    \draw[arr] (irL) -- (linL);
-    \draw[arr] (irH) -- (linH);
-    \draw[arr] (linL.east) -- (sum.north);
-    \draw[arr] (linH.east) -- (sum.south);
-    \draw[arr] (sum) -- (dn);
-    \draw[arr] (dn) -- (out);
-    % stats feedback (instance statistics + gate) from normalize to denormalize
-    \draw[->, thick, dashed, gray!70]
-      (nrm.south) to[out=-90,in=-90]
-      node[below, font=\scriptsize, text=black, midway]
-      {instance stats $\mu,\sigma$, drift; gate $\rho$}
-      (dn.south);
-  \end{tikzpicture}%
-  }
+  \IfFileExists{../results/figures/architecture.pdf}{%
+    \includegraphics[width=\linewidth]{../results/figures/architecture.pdf}%
+  }{\fbox{\parbox[c][0.18\textheight][c]{0.9\linewidth}{\centering
+    \textbf{[architecture figure pending]}}}}
   \caption{Overview of the \method\ forward pass for one channel-independent
   series. A-RevIN normalizes the input and stores its instance statistics; a
   learnable partition-of-unity spectral filter splits the normalized series into
