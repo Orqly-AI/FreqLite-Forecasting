@@ -2,7 +2,7 @@
 
 > **A lightweight frequency-decomposed linear model for long-term time-series forecasting — matches/beats a PatchTST Transformer at ~4× fewer parameters, on a single 4 GB laptop GPU.**
 
-![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
+![License: ORAL v1.0](https://img.shields.io/badge/License-ORAL%20v1.0-orange.svg)
 ![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)
 ![PyTorch 2.6](https://img.shields.io/badge/PyTorch-2.6%2Bcu124-ee4c2c.svg)
 
@@ -166,5 +166,9 @@ See `CITATION.cff` for machine-readable metadata.
 
 ## License
 
-Released under the [MIT License](LICENSE) © 2026 Mirza Samad Ahmed Baig and
-Syeda Anshrah Gillani (Orqly-AI).
+Released under the **Orqly-AI Restricted Attribution License (ORAL) v1.0** — see
+[LICENSE](LICENSE). © 2026 Mirza Samad Ahmed Baig and Syeda Anshrah Gillani
+(Orqly-AI). Use, modification, and redistribution of the code require attribution;
+the research paper may not be reproduced or republished without permission. Note
+that the published/preprint versions of the paper are governed by the respective
+publisher and preprint-server terms (see LICENSE §8).

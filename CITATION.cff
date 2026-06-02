@@ -13,7 +13,7 @@ authors:
 year: 2026
 url: "https://github.com/Orqly-AI/FreqLite-Forecasting"
 repository-code: "https://github.com/Orqly-AI/FreqLite-Forecasting"
-license: MIT
+license-url: "https://github.com/Orqly-AI/FreqLite-Forecasting/blob/main/LICENSE"
 keywords:
   - time-series forecasting
   - long-term forecasting
