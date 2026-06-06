@@ -6,10 +6,12 @@ authors:
     given-names: "Mirza Samad Ahmed"
     affiliation: "Fandaqah, Al Khobar, Saudi Arabia; Hamdard University, Karachi, Pakistan"
     email: "MirzaSamadcontact@gmail.com"
+    orcid: "https://orcid.org/0009-0002-1229-0482"
   - family-names: "Gillani"
     given-names: "Syeda Anshrah"
     affiliation: "Hamdard University, Karachi, Pakistan"
     email: "SyedaAnshrah16@gmail.com"
+    orcid: "https://orcid.org/0009-0008-1952-3967"
 year: 2026
 url: "https://github.com/Orqly-AI/FreqLite-Forecasting"
 repository-code: "https://github.com/Orqly-AI/FreqLite-Forecasting"
