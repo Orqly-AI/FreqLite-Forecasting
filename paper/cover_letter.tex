@@ -7,21 +7,26 @@
 
 \begin{document}
 
-To: The Editor-in-Chief, \textit{Knowledge-Based Systems} (Elsevier)
+To: The Editor-in-Chief, \textit{Digital Signal Processing} (Elsevier)
 
 Dear Editor,
 
 We are pleased to submit our manuscript, ``FreqLite: A Lightweight
 Frequency-Decomposed Linear Model with Adaptive Reversible Normalization for
 Robust Long-Term Time-Series Forecasting,'' for consideration as an original
-research article in \textit{Knowledge-Based Systems}.
+research article in \textit{Digital Signal Processing}.
 
-Long-term time-series forecasting underpins decision-making across energy,
-weather, traffic, and industrial monitoring. Recent work shows that lightweight
-linear models can match or exceed far heavier Transformers on standard
-benchmarks. Our work advances this direction with a model that is both
-competitive in accuracy and exceptionally cheap to train and deploy: the entire
-study is conducted on a single 4\,GB consumer laptop GPU.
+Our method is fundamentally a frequency-domain signal-processing approach to
+time-series forecasting. At its core, a learnable, lossless, partition-of-unity
+spectral filter (built on the real FFT) decomposes the input signal into
+frequency bands that are modeled separately and recombined---an adaptive spectral
+analysis-synthesis pipeline well aligned with the scope of \textit{Digital Signal
+Processing}. Long-term time-series forecasting underpins decision-making across
+energy, weather, traffic, and biomedical monitoring, and recent work shows that
+lightweight linear models can match or exceed far heavier Transformers. Our work
+advances this direction with a model that is both competitive in accuracy and
+exceptionally cheap to train and deploy: the entire study runs on a single 4\,GB
+consumer laptop GPU.
 
 The manuscript makes three contributions. First, \textbf{FreqLite}, an
 ultra-lightweight, channel-independent frequency-decomposed linear forecaster
