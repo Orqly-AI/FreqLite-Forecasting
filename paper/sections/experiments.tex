@@ -1,0 +1,133 @@
+\section{Experimental Setup}
+\label{sec:experiments}
+
+A central goal of this work is to show that competitive long-term forecasting is
+achievable under a strict commodity-hardware budget. Accordingly, every
+experiment in this paper---training, evaluation, ablation, and efficiency
+profiling, for \method\ and all baselines---is run on a \emph{single} NVIDIA
+RTX~3050~Ti laptop GPU with 4\,GB of VRAM. We re-implement and run all baselines
+ourselves under identical data splits, normalization, seeds, and hardware, so
+all comparisons are like-for-like rather than copied from other papers.
+
+\subsection{Datasets}
+\label{sec:exp:data}
+
+We evaluate on seven widely used public long-term forecasting benchmarks: the
+four Electricity Transformer Temperature datasets (ETTh1, ETTh2, ETTm1, ETTm2),
+Weather, Electricity (ECL), and Traffic. The ETT datasets record seven
+power-system variates; ETTh1/ETTh2 are sampled hourly and ETTm1/ETTm2 every
+15 minutes. Weather records 21 meteorological variates at 10-minute resolution.
+Electricity records 321 hourly electricity consumption variates; Traffic records
+862 hourly road-occupancy variates from the Bay Area freeway system. The
+higher-variate datasets (ECL, Traffic) expose the channel-mixing overhead of
+Transformer-based models. Table~\ref{tab:datasets} summarizes all seven datasets.
+All series are multivariate and forecast in the channel-independent setting
+(Section~\ref{sec:method:setup}), except iTransformer and TimesNet which
+are channel-mixing architectures (see Section~\ref{sec:exp:baselines}).
+To probe behavior under distribution shift, we additionally use two datasets
+outside the standard suite in the non-stationarity study
+(Section~\ref{sec:results:nonstat}): Exchange-rate and ILI (national illness),
+evaluated at the conventional shorter horizons $H \in \{24,36,48,60\}$.
+
+\begin{table}[t]
+\centering
+\caption{Summary of the benchmark datasets. $C$ is the number of channels;
+``Steps'' is the total series length. ETT splits follow the standard
+12/4/4-month train/validation/test convention; all others use a chronological
+70\%/10\%/20\% split.}
+\label{tab:datasets}
+\begin{tabular}{lcccc}
+\toprule
+Dataset     & $C$ & Frequency & Steps      & Split \\
+\midrule
+ETTh1       &  7  & hourly    & 17{,}420   & 12/4/4 mo \\
+ETTh2       &  7  & hourly    & 17{,}420   & 12/4/4 mo \\
+ETTm1       &  7  & 15-min    & 69{,}680   & 12/4/4 mo \\
+ETTm2       &  7  & 15-min    & 69{,}680   & 12/4/4 mo \\
+Weather     & 21  & 10-min    & 52{,}696   & 70/10/20\% \\
+Electricity & 321 & hourly    & 26{,}304   & 70/10/20\% \\
+Traffic     & 862 & hourly    & 17{,}544   & 70/10/20\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Forecasting Protocol}
+\label{sec:exp:protocol}
+
+We follow the established long-term forecasting protocol
+\citep{zeng2023dlinear,nie2023patchtst} so that our numbers are directly
+comparable to published baselines. For the ETT datasets we use the canonical
+12/4/4-month train/validation/test split; Weather uses a chronological
+70\%/10\%/20\% split. Each series is z-score normalized using statistics
+computed on the \emph{training portion only} (per channel), which prevents
+leakage and matches the standard normalization that makes MSE/MAE comparable
+across papers. The model's internal A-RevIN/RevIN then operates as an instance
+normalization on top of this dataset-level normalization, and the loss and
+metrics are computed in the train-z-scored space.
+
+We report two lookback lengths: $L{=}336$, the strong setting for linear models,
+as the \emph{headline} configuration, and $L{=}96$ for completeness. For every
+lookback we forecast the four standard horizons $H \in \{96, 192, 336, 720\}$.
+We evaluate with Mean Squared Error (MSE) and Mean Absolute Error (MAE),
+averaged over all horizon steps and channels. Every $(\text{dataset}, H,
+\text{model})$ cell is run with three seeds $\{2021, 2022, 2023\}$, and all
+tables report the mean $\pm$ standard deviation over seeds.
+
+\subsection{Baselines}
+\label{sec:exp:baselines}
+
+We compare against a sanity floor and seven competitive forecasters spanning the
+linear, lightweight-frequency, and Transformer families:
+\begin{itemize}
+  \item \textbf{Naive (repeat-last)}: predicts the last observed value for the
+        entire horizon; a parameter-free sanity floor.
+  \item \textbf{NLinear} \citep{zeng2023dlinear}: subtracts the last lookback
+        value, applies a single \texttt{Linear}$(L,H)$, and adds it back---a
+        minimal distribution-shift-robust linear model.
+  \item \textbf{DLinear} \citep{zeng2023dlinear}: moving-average trend/seasonal
+        decomposition with two \texttt{Linear}$(L,H)$ heads, summed; the
+        time-domain decomposition baseline \method\ generalizes.
+  \item \textbf{RLinear} \citep{li2023rlinear}: RevIN \citep{kim2022revin} plus a
+        single \texttt{Linear}$(L,H)$; the normalization baseline \arevin\
+        generalizes.
+  \item \textbf{FITS} \citep{xu2024fits}: RevIN plus a low-pass cutoff in the
+        rFFT domain and a single complex linear layer; the closest lightweight
+        frequency-domain prior art, which \emph{discards} the high-frequency band
+        \method\ retains.
+  \item \textbf{PatchTST-small} \citep{nie2023patchtst}: a deliberately small,
+        channel-independent patch Transformer (patch length 16, stride 8,
+        $d_{\text{model}}{=}64$, 4 heads, 2 layers, dropout 0.2). Run only on
+        the five low-$C$ datasets (ETT + Weather); the attention memory of
+        $O(L^{2})$ per patch makes it 4\,GB-infeasible on Electricity ($C{=}321$)
+        and Traffic ($C{=}862$) at the lookbacks we use.
+  \item \textbf{iTransformer} \citep{liu2024itransformer}: inverted self-attention
+        over variate tokens (ICLR 2024); each channel is embedded as a token and
+        attention operates across channels rather than time steps. Config:
+        $d_{\text{model}}{=}128$, 4 heads, 2 encoder layers. A 4\,GB-feasible
+        configuration for all seven datasets.
+  \item \textbf{TimesNet-small} \citep{wu2023timesnet}: rFFT period detection plus
+        2D Inception convolutions within each dominant period (ICLR 2023), scaled
+        to $d_{\text{model}}{=}d_{\text{ff}}{=}32$, $k{=}3$ dominant periods,
+        2 layers. As a channel-mixing model its memory scales moderately with $C$.
+\end{itemize}
+iTransformer and TimesNet are channel-mixing architectures; we run them on all
+seven datasets with the same protocol but dataset-specific batch sizes (16 for
+Weather and Electricity, 8 for Traffic) to remain within the 4\,GB budget.
+
+\subsection{Implementation Details}
+\label{sec:exp:impl}
+
+All models are implemented in PyTorch 2.6.0 (CUDA 12.4) and trained on a single
+RTX~3050~Ti laptop GPU (4\,GB). We use the Adam optimizer \citep{kingma2015adam}
+with learning rate $10^{-3}$, no weight decay, and MSE loss. Training uses a
+batch size of 32, at most 20 epochs with early stopping (patience 3 on the
+validation loss), a type-1 step learning-rate schedule (halving the rate each
+epoch after the first), and global gradient-norm clipping at 1.0. We train in
+full \texttt{fp32} precision: the models are tiny, fp32 fits comfortably within
+4\,GB, and it avoids the reproducibility noise of mixed precision. For
+reproducibility we fix the \texttt{torch}, \texttt{numpy}, and \texttt{random}
+seeds, enable deterministic algorithms, and disable cuDNN autotuning. At each
+run we record parameters, analytic FLOPs, wall-clock training time per epoch, and
+peak GPU memory via \texttt{torch.cuda.max\_memory\_allocated}; these populate the
+efficiency analysis in Section~\ref{sec:efficiency}. Every reported number is
+regenerable by a script in the repository.

@@ -1,0 +1,78 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[hidelinks]{hyperref}
+\pagestyle{empty}
+\setlength{\parskip}{6pt}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+To: Prof. Xizhao Wang, Editor-in-Chief, \textit{International Journal of
+Machine Learning and Cybernetics} (Springer)
+
+Dear Prof. Wang,
+
+We are pleased to submit our manuscript, ``FreqLite: A Lightweight
+Frequency-Decomposed Linear Model with Adaptive Reversible Normalization for
+Robust Long-Term Time-Series Forecasting,'' for consideration as an original
+research article in \textit{International Journal of Machine Learning and
+Cybernetics}.
+
+Long-term time-series forecasting is a core task in engineering applications
+spanning energy systems, traffic management, weather monitoring, and industrial
+process control. Our work directly targets a practical gap: existing accurate
+forecasters (Transformer-based) are too resource-intensive for constrained
+deployment environments, while cheap linear models have limited representational
+capacity. FreqLite bridges this gap with a principled frequency-domain
+architecture that is both highly accurate and exceptionally resource-efficient.
+
+The manuscript makes three contributions. First, \textbf{FreqLite}, an
+ultra-lightweight, channel-independent frequency-decomposed linear forecaster: a
+learnable partition-of-unity spectral filter splits the input signal into
+frequency bands modeled by dedicated linear heads. Evaluated across seven
+datasets (including high-variate Electricity with 321 channels and Traffic with
+862 channels) against eight baselines, FreqLite at long lookback ($L{=}336$)
+attains the best overall average test MSE and the most per-setting wins of any
+model, \textbf{outperforming iTransformer (ICLR 2024) by 4.3\% and TimesNet
+(ICLR 2023) by 23.2\%} in paired per-cell MSE---while using $13\times$ less
+peak GPU memory and $18\times$ less training time than TimesNet---all on a
+single 4\,GB consumer laptop GPU. These improvements are statistically
+significant under paired Wilcoxon tests ($p < 10^{-4}$). Second, \textbf{Adaptive Reversible
+Instance Normalization (A-RevIN)}, a regime-adaptive reversible normalization
+that strictly generalizes RevIN, engaging under non-stationarity (validated on
+ILI and a controlled distribution-shift stress test) and reducing to vanilla
+RevIN without harm on stationary data. Third, a \textbf{comprehensive,
+reproducible accuracy--efficiency study} on commodity hardware across 7 datasets
+and 8 baselines, with ablations isolating each component and a distribution-shift
+stress test that directly probes A-RevIN's robustness claims.
+
+This work is aligned with IJMLC's focus on the hybrid development of machine
+learning methodology and its practical application: all experiments run on a
+single 4\,GB laptop GPU, the complete codebase is publicly available and
+reproducible, and the paper reports limitations and non-wins honestly.
+
+This manuscript is original, has not been published previously, and is not under
+consideration elsewhere. All authors have approved the submission; the authors
+declare no competing interests and received no specific funding.
+
+Thank you for your consideration.
+
+\vspace{6pt}
+Sincerely,
+
+\vspace{6pt}
+Mirza Samad Ahmed Baig (Corresponding author) \\
+Fandaqah, Al Khobar, Saudi Arabia \\
+Mirza@fandaqah.com
+
+\vspace{4pt}
+Syeda Anshrah Gillani \\
+Heidelberg University, Germany \\
+syeda.gilani@stud.uni-heidelberg.de
+
+\vspace{4pt}
+Asher Ali \\
+Fandaqah, Al Khobar, Saudi Arabia \\
+CTO@Fandaqah.com
+
+\end{document}

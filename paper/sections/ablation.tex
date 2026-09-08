@@ -1,0 +1,69 @@
+\section{Ablation Study}
+\label{sec:ablation}
+
+We isolate the contribution of each \method\ component on a representative subset
+of the standard (largely stationary) benchmarks---ETTh1, ETTm2, and
+Weather---at horizons $H \in \{96, 720\}$ with lookback $L{=}336$ and three
+seeds. Because every component is an opt-in generalization that degenerates to a
+known baseline (Section~\ref{sec:method}), each ablation is a clean controlled
+comparison along the nesting $\text{Linear} \subseteq \text{RLinear} \subseteq
+\method$.
+
+\subsection{Component Ablations}
+\label{sec:ablation:components}
+
+Table~\ref{tab:ablation} reports the ablations. We consider: (A0) the full
+\method; (A1) replacing \arevin\ with plain RevIN while keeping the decomposition,
+which isolates the value of adaptive de-normalization; (A2) replacing the
+learnable spectral split with a DLinear-style fixed moving-average split while
+keeping \arevin, which isolates the value of the learnable decomposition; (A3)
+$K{=}1$ with \arevin\ (an ``A-RevIN-Linear''), showing the decomposition's
+marginal value; (A4) $K{=}1$ with plain RevIN, which is exactly RLinear and
+verifies the degeneracy $\method \supseteq \text{RLinear}$; (A5) increasing the
+number of bands to $K \in \{3,4\}$; (A7) freezing the decomposition at
+initialization to separate the benefit of a soft mask from that of
+\emph{learning} it; and (A8) \arevin\ without the drift-propagation term
+$\boldsymbol{\lambda}$.
+
+\IfFileExists{../results/tables/ablation_table.tex}{%
+  \input{../results/tables/ablation_table.tex}%
+}{\begin{table}[t]\centering\caption{Component ablations.}%
+  \label{tab:ablation}\textit{[ablation table pending]}\end{table}}
+
+\subsection{Analysis}
+\label{sec:ablation:analysis}
+
+The A4 row provides the key sanity check: with a single all-pass band and plain
+RevIN, \method\ reproduces RLinear (mean MSE $0.3119$), confirming the strict
+nesting that makes every added component an independent, opt-in generalization.
+
+On this stationary subset, the small overall improvement of the full model
+(A0, $0.3096$) over RLinear (A4, $0.3119$)---about $0.7\%$---is attributable to
+the \emph{band split}, not to adaptive normalization. Two comparisons make this
+precise. Adding \arevin\ to a single-head backbone leaves the error essentially
+unchanged (A3 $0.3118$ vs.\ A4 $0.3119$), and replacing \arevin\ with plain RevIN
+in the full model is likewise neutral (A1 $0.3096$ vs.\ A0 $0.3096$); so
+\arevin\ is neutral on stationary data---exactly the graceful-degradation
+behavior it is designed for. By contrast, introducing the band split accounts for
+the gain: a fixed moving-average split is nearly as good (A2 $0.3102$), and
+freezing the learned split at initialization is no worse than learning it here
+(A7 $0.3096$), indicating that on these datasets it is the \emph{soft band
+routing} rather than the \emph{learning} of the cutoff that matters. Adding more
+bands gives only a marginal further change (A5 $0.3094$ for $K\in\{3,4\}$), and
+removing the drift term has no effect on this stationary subset (A8 $0.3096$).
+These results motivate the dedicated non-stationarity study in
+Section~\ref{sec:results:nonstat}, where---unlike here---\arevin\ is the
+component that drives the gains.
+
+\subsection{Interpretability of Learned Parameters}
+\label{sec:ablation:interp}
+
+Because \method's added components are few and scalar-parameterized, their
+learned values are directly interpretable. The learned spectral mask
+(Eq.~\ref{eq:mask-low}) is shown in Figure~\ref{fig:learned_filter}, and the
+per-step \arevin\ correction profile $\lambda_t$ (Eq.~\ref{eq:arevin-shift}) in
+Figure~\ref{fig:arevin_profile}. Together with the gate analysis of
+Section~\ref{sec:results:nonstat}---where the learned gate $\bar\rho$ opens on
+non-stationary data and the error falls monotonically with gate
+engagement---these provide direct evidence that the components behave as designed
+rather than merely adding parameters.

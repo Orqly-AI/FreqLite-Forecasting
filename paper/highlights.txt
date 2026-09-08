@@ -1,0 +1,10 @@
+Highlights
+==========
+(EAAI/Elsevier requires 3-5 highlights, each <= 85 characters.
+ Character counts shown in brackets; remove them before submission.)
+
+- FreqLite: a lightweight frequency-decomposed linear model for long-term forecasting  [83]
+- Best overall accuracy of 9 models across 7 benchmarks at long lookback               [72]
+- Beats iTransformer (ICLR'24) by 4.3% and TimesNet (ICLR'23) by 23.2% in paired MSE   [84]
+- Trains end-to-end on a single 4 GB laptop GPU; 13x less memory than TimesNet         [78]
+- A-RevIN adapts normalization to non-stationarity and reduces to RevIN otherwise      [79]

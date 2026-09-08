@@ -1,0 +1,56 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+We presented \method, an ultra-lightweight, channel-independent
+frequency-decomposed linear forecaster. A learnable, lossless,
+partition-of-unity spectral filter splits the input into bands forecast by
+dedicated linear heads, retaining and modeling the high-frequency band that
+low-pass approaches discard. Evaluated comprehensively across seven datasets
+against eight baselines including two recent ICLR Transformer models, \method\
+at long lookback ($L{=}336$) attains the best overall average test MSE and the
+most per-setting wins, outperforming iTransformer (ICLR 2024) by $4.3\%$
+and TimesNet (ICLR 2023) by $23.2\%$ in paired per-cell MSE ($6.9\%$ and
+$20.8\%$ on the five standard benchmarks), while using $13\times$
+less peak GPU memory and $18\times$ less training time than TimesNet on a single
+4\,GB laptop GPU. Among linear baselines, \method\ leads RLinear by $0.7\%$
+($p \approx 10^{-9}$, paired Wilcoxon).
+
+On top of this backbone we introduced \arevin, a regime-adaptive reversible
+normalization that strictly generalizes RevIN: it engages under
+non-stationarity---lowering error by up to about $5\%$ on the strongly
+non-stationary ILI dataset, monotonically in its learned gate---and reduces to
+RevIN without harm on stationary data. A controlled distribution-shift stress
+test confirms that \method's frequency decomposition provides consistent gains
+across all shift regimes, while \arevin\ adds targeted robustness for genuinely
+non-stationary distributions. Our analysis also surfaced a methodological
+insight: \arevin's gate must be initialized at the identity point to avoid a
+gradient trap that otherwise keeps it dormant. Because each component is an
+opt-in generalization, the model admits the clean nesting
+$\text{Linear} \subseteq \text{RLinear} \subseteq \method$, and our ablations
+attribute performance to each part.
+
+\paragraph{Limitations.}
+We report several limitations honestly. First, on the standard, largely
+stationary benchmarks the accuracy gains over RLinear are \emph{modest} in
+magnitude (about $0.7\%$ MSE at $L{=}336$), even though statistically significant;
+the headline strengths are efficiency and the wins over Transformer baselines.
+Relatedly, on Traffic ($C{=}862$) iTransformer's channel-mixing attention wins
+outright ($4.3\%$ lower MSE than \method); strong cross-channel correlation
+remains a regime where channel-independent models concede accuracy.
+Second, \arevin's benefit is regime-dependent: clear under strong non-stationarity
+but neutral on stationary benchmarks (where it correctly reduces to RevIN); it is
+therefore best understood as a conditional component rather than a universal
+improvement. Third, \arevin\ is a first-order horizon-aware level/scale
+correction that does not model per-step variance. Fourth, channel-mixing models
+(iTransformer, TimesNet) are run at reduced batch sizes on high-variate datasets
+to stay within the 4\,GB budget; their results reflect our 4\,GB-feasible
+small configurations rather than their full published settings.
+
+\paragraph{Future work.}
+Natural extensions include modeling per-step variance within the reversible
+normalization (a second-order \arevin), learning the drift feature with a small
+shared encoder while preserving the reversibility guarantee, and band-conditional
+heads beyond additive recombination. More broadly, \method\ suggests that careful,
+interpretable, conditionally-adaptive normalization---rather than added model
+capacity---is a promising direction for efficient long-term forecasting on
+commodity hardware.

@@ -1,0 +1,2 @@
+model,dataset,lookback,horizon,seed,test_mse,test_mae,val_mse,params,flops_per_series,sec_per_epoch,peak_gpu_mem_mb,epochs_run,lookback_label
+freqlite,ETTh1,336,96,2021,0.374102,0.394628,0.672235,64997,185420,2.0582,72.5,6,L336

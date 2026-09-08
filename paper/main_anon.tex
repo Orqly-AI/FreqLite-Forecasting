@@ -1,0 +1,179 @@
+%% FreqLite: A Lightweight Frequency-Decomposed Linear Model with
+%% Adaptive Reversible Normalization for Robust Long-Term Time-Series Forecasting
+%%
+%% DOUBLE-ANONYMIZED VERSION for peer review. Author names, affiliations,
+%% emails, ORCIDs, GitHub org, and CRediT names are stripped/generalized.
+%% Full author details live in title_page.tex (submitted separately, not sent
+%% to reviewers). Target venue: Applied Intelligence (Springer).
+%%
+%% Build: pdflatex -> bibtex -> pdflatex -> pdflatex
+
+\documentclass[preprint,review,3p,times]{elsarticle}
+
+% ---------------------------------------------------------------------------
+% Packages
+% ---------------------------------------------------------------------------
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{siunitx}
+\usepackage{xcolor}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usetikzlibrary{positioning,calc,arrows.meta,fit,backgrounds}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue
+}
+
+% ---------------------------------------------------------------------------
+% Convenience macros
+% ---------------------------------------------------------------------------
+\newcommand{\method}{\textsc{FreqLite}}
+\newcommand{\arevin}{A-RevIN}
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\by}{\mathbf{y}}
+\newcommand{\bX}{\mathbf{X}}
+\newcommand{\bY}{\mathbf{Y}}
+\newcommand{\bs}{\mathbf{s}}
+\newcommand{\bp}{\mathbf{p}}
+\newcommand{\R}{\mathbb{R}}
+
+% Placeholder macro for quantitative claims (none remain in the final draft;
+% kept for safety so any stray use still compiles).
+\newcommand{\PLACEHOLDER}[1]{\textbf{[#1]}}
+
+% Helper to fit very wide auto-generated tables (16-column main results) to the
+% text width. Within a group, \fitwidetables makes the next tabular environments
+% be captured and \resizebox-ed to \textwidth.
+\newsavebox{\fitbox}
+\newcommand{\fitwidetables}{%
+  \let\oldtabular\tabular
+  \let\oldendtabular\endtabular
+  \renewenvironment{tabular}[2][]{%
+    \begin{lrbox}{\fitbox}\oldtabular[##1]{##2}%
+  }{%
+    \oldendtabular\end{lrbox}\resizebox{\textwidth}{!}{\usebox{\fitbox}}%
+  }%
+}
+
+% siunitx setup for results tables
+\sisetup{detect-weight=true, detect-family=true, round-mode=places, round-precision=3}
+
+% ---------------------------------------------------------------------------
+% Front matter (anonymized)
+% ---------------------------------------------------------------------------
+\begin{document}
+
+\begin{frontmatter}
+
+\title{FreqLite: A Lightweight Frequency-Decomposed Linear Model with
+Adaptive Reversible Normalization for Robust Long-Term Time-Series
+Forecasting}
+
+\author[inst1]{Anonymous Author(s)}
+
+\affiliation[inst1]{organization={Affiliation withheld for double-anonymous review}}
+
+\begin{abstract}
+Long-term time-series forecasting requires models that are both accurate and
+efficient enough for commodity hardware. We present \method, an ultra-lightweight,
+channel-independent frequency-decomposed linear forecaster: a learnable, lossless,
+partition-of-unity spectral filter splits the input into bands forecast by
+per-band linear heads, retaining and modeling the high-frequency band rather than
+discarding it as in low-pass-truncation approaches. Evaluated on seven datasets
+including high-variate Electricity ($C{=}321$) and Traffic ($C{=}862$) against
+eight baselines, \method\ at long lookback ($L{=}336$) attains the best overall
+average test MSE and the most per-setting wins of any model, \textbf{outperforming
+iTransformer (ICLR 2024) by 4.3\% and TimesNet (ICLR 2023) by 23.2\%} across all
+seven datasets (6.9\% and 20.8\% on the five standard benchmarks; all
+$p<10^{-4}$, paired Wilcoxon) while using $13\times$ less peak GPU memory and
+$18\times$ less training time than TimesNet---all on a single 4\,GB laptop GPU.
+Among linear baselines, \method\ leads RLinear by 0.7\% with high statistical
+significance ($p \approx 10^{-9}$). We further introduce Adaptive Reversible
+Instance Normalization (\arevin), a \emph{regime-adaptive} reversible normalization
+that strictly generalizes RevIN (recovered exactly when its gate is closed). A
+controlled distribution-shift stress test reveals that \method's frequency
+decomposition provides consistent gains across all shift regimes, while \arevin\
+adds targeted robustness for genuinely non-stationary distributions---reducing
+error by up to $5\%$ on ILI with the gate engaging monotonically with
+non-stationarity. All components are independently ablatable along the nesting
+$\text{Linear} \subseteq \text{RLinear} \subseteq \method$, and the entire study
+is reproducible on a commodity laptop GPU.
+\end{abstract}
+
+\begin{keyword}
+Time-series forecasting \sep Frequency decomposition \sep Linear models
+\sep Reversible instance normalization \sep Efficient deep learning
+\end{keyword}
+
+\end{frontmatter}
+
+% ---------------------------------------------------------------------------
+% Body
+% ---------------------------------------------------------------------------
+\input{sections/introduction}
+\input{sections/related_work}
+\input{sections/method}
+\input{sections/experiments}
+\input{sections/results}
+\input{sections/ablation}
+\input{sections/efficiency}
+\input{sections/conclusion}
+
+% ---------------------------------------------------------------------------
+% Required declarations (anonymized)
+% ---------------------------------------------------------------------------
+\section*{CRediT authorship contribution statement}
+\textbf{Author 1:} Conceptualization, Methodology, Software,
+Validation, Formal analysis, Investigation, Writing -- original draft,
+Writing -- review \& editing. \textbf{Author 2:} Conceptualization,
+Methodology, Software, Validation, Formal analysis, Investigation,
+Writing -- original draft, Writing -- review \& editing. Authors 1 and 2
+contributed equally to all aspects of this work.
+\textbf{Author 3:} Resources, Supervision, Writing -- review \& editing.
+
+\section*{Declaration of competing interest}
+The authors declare that they have no known competing financial interests or
+personal relationships that could have appeared to influence the work reported in
+this paper.
+
+\section*{Funding}
+This research did not receive any specific grant from funding agencies in the
+public, commercial, or not-for-profit sectors.
+
+\section*{Data availability}
+All datasets used in this study are publicly available standard long-term
+forecasting benchmarks, cited in the text. The complete code, configurations,
+and instructions required to reproduce every reported result will be made
+publicly available via an anonymized repository link after the first review
+round, and de-anonymized upon acceptance.
+
+\section*{Declaration of generative AI and AI-assisted technologies in the writing process}
+During the preparation of this work, the authors used a generative AI assistant
+(Anthropic Claude) to support software implementation, the drafting and editing of
+the manuscript, and the preparation of scripts used to run experiments and to
+generate tables and figures. All experimental results were obtained by executing
+this code on the authors' own hardware. After using these tools, the authors
+reviewed, verified, and edited all content and code, and they take full
+responsibility for the content of the publication.
+
+% ---------------------------------------------------------------------------
+% Bibliography
+% ---------------------------------------------------------------------------
+\bibliographystyle{elsarticle-num}
+\bibliography{refs}
+
+\end{document}

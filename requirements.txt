@@ -1,0 +1,49 @@
+# FreqLite — pinned dependencies (Python 3.12.10)
+#
+# PyTorch is built against CUDA 12.4 wheels. Install torch FIRST from the
+# PyTorch index, then the rest from PyPI:
+#
+#   .venv\Scripts\python.exe -m pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cu124
+#   .venv\Scripts\python.exe -m pip install -r requirements.txt
+#
+# Hardware target: NVIDIA RTX 3050 Ti Laptop GPU, 4 GB VRAM.
+
+# --- core DL ---
+torch==2.6.0          # +cu124 build; see header note above
+
+# --- numerics / data ---
+numpy==2.1.3
+pandas==2.2.3
+scipy==1.17.1
+scikit-learn==1.6.1
+
+# --- config / utils ---
+PyYAML==6.0.2
+tqdm==4.67.1
+
+# --- plotting ---
+matplotlib==3.10.0
+
+# --- transitive pins (recorded for full reproducibility) ---
+colorama==0.4.6
+contourpy==1.3.3
+cycler==0.12.1
+filelock==3.29.0
+fonttools==4.63.0
+fsspec==2026.4.0
+Jinja2==3.1.6
+joblib==1.5.3
+kiwisolver==1.5.0
+MarkupSafe==3.0.3
+mpmath==1.3.0
+networkx==3.6.1
+packaging==26.2
+pillow==12.2.0
+pyparsing==3.3.2
+python-dateutil==2.9.0.post0
+pytz==2026.2
+six==1.17.0
+sympy==1.13.1
+threadpoolctl==3.6.0
+typing_extensions==4.15.0
+tzdata==2026.2
